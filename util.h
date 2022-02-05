@@ -1,42 +1,36 @@
-/****************************************************/
-/* File: util.h                                     */
-/* Utility functions for the TINY compiler          */
-/* Compiler Construction: Principles and Practice   */
-/* Kenneth C. Louden                                */
+/*						Alunos:						*/
+/*													*/
+/*			Yuri Sodre Bastos  - 140547				*/
+/*			Daniel de Souza Paiva - 140620			*/
+/*													*/
+/* 				Arquivo: util.h               	    */
+/* 		Funções de Utilidade para manipulação       */
+/*			 dos nós Árvore Sintática				*/
+/*													*/
+/* 				Baseado no Compilador		    	*/
+/* 		  para TINY de Kenneth C. Louden 			*/
 /****************************************************/
 
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
-/* Procedure printToken prints a token
- * and its lexeme to the listing file
- */
+/* Procedimento printToken imprime um token e seu lexema */
 void printToken(TokenType , const char* );
 
 void printTypes(TreeNode* tree);
-/* Function newStmtNode creates a new statement
- * node for syntax tree construction
- */
+/* Função newStmtNode cria um novo nó do tipo Statement */
 TreeNode * newStmtNode(StmtKind);
 
-/* Function newExpNode creates a new expression
- * node for syntax tree construction
- */
+/* Função newExpNode cria um novo nó do tipo Expressão */
 TreeNode * newExpNode(ExpKind);
 
-/* Function newDeclNode creates a new declaration
- * node for syntax tree construction
- */
+/* Função newDeclNode cria um novo nó do tipo Declaração */
 TreeNode * newDeclNode(DeclKind);
 
-/* Function copyString allocates and makes a new
- * copy of an existing string
- */
+/* Função copyString cria uma cópia de uma string existente */
 char * copyString( char * );
 
-/* procedure printTree prints a syntax tree to the
- * listing file using indentation to indicate subtrees
- */
+/* Procedimento printTree imprime a árvore sintática utilizando identação para designar subárvores */
 void printTree( TreeNode * );
 
 

@@ -469,8 +469,8 @@ char *yytext;
 /* 				Arquivo: cminus.l                   */
 /* 			Especificacao Lexica pra C-             */
 /*													*/
-/* 				Baseado na especificacao		    */
-/* 		lexica para TINY de Kenneth C. Louden 		*/
+/* 				Baseado no Compilador		    	*/
+/* 		  para TINY de Kenneth C. Louden 			*/
 /****************************************************/
 ///////////////
 //DEFINICOES//
@@ -480,14 +480,10 @@ char *yytext;
 	#include "util.h"
 	#include "scan.h"
 
-int atual = 0;
-
-
-int numeros = 0, identificadores = 0, espacos = 0, erros = 0, linhas = 0;
 char tokenString[MAXTOKENLEN+1];
 
 
-#line 491 "lex.yy.c"
+#line 487 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -638,14 +634,14 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 45 "cminus.l"
+#line 41 "cminus.l"
 
 
 			///////////////
 			////REGRAS////
 			/////////////
 
-#line 649 "lex.yy.c"
+#line 645 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -738,212 +734,212 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 51 "cminus.l"
+#line 47 "cminus.l"
 {printf(" %s -> ELSE \n", yytext) ; return ELSE;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 52 "cminus.l"
+#line 48 "cminus.l"
 {printf(" %s -> ELSE \n", yytext) ; return ELSE;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 53 "cminus.l"
+#line 49 "cminus.l"
 {printf(" %s -> ELSE \n", yytext) ; return ELSE;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 54 "cminus.l"
+#line 50 "cminus.l"
 {printf(" %s -> IF \n", yytext) ; return IF;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 55 "cminus.l"
+#line 51 "cminus.l"
 {printf(" %s -> IF \n", yytext) ; return IF;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 56 "cminus.l"
+#line 52 "cminus.l"
 {printf(" %s -> IF \n", yytext) ; return IF;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 57 "cminus.l"
+#line 53 "cminus.l"
 {printf(" %s -> INT \n", yytext) ; return INT;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 58 "cminus.l"
+#line 54 "cminus.l"
 {printf(" %s -> INT \n", yytext) ; return INT;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 59 "cminus.l"
+#line 55 "cminus.l"
 {printf(" %s -> INT \n", yytext) ; return INT;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 60 "cminus.l"
+#line 56 "cminus.l"
 {printf(" %s -> RETURN \n", yytext) ; return RETURN;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 61 "cminus.l"
+#line 57 "cminus.l"
 {printf(" %s -> RETURN \n", yytext) ; return RETURN;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 62 "cminus.l"
+#line 58 "cminus.l"
 {printf(" %s -> RETURN \n", yytext) ; return RETURN;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 63 "cminus.l"
+#line 59 "cminus.l"
 {printf(" %s -> VOID \n", yytext) ; return VOID;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 64 "cminus.l"
+#line 60 "cminus.l"
 {printf(" %s -> VOID \n", yytext) ; return VOID;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 65 "cminus.l"
+#line 61 "cminus.l"
 {printf(" %s -> VOID \n", yytext) ; return VOID;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 66 "cminus.l"
+#line 62 "cminus.l"
 {printf(" %s -> WHILE \n", yytext) ; return WHILE;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 67 "cminus.l"
+#line 63 "cminus.l"
 {printf(" %s -> WHILE \n", yytext) ; return WHILE;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 68 "cminus.l"
+#line 64 "cminus.l"
 {printf(" %s -> WHILE \n", yytext) ; return WHILE;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 71 "cminus.l"
+#line 67 "cminus.l"
 {printf(" %s -> PLUS \n", yytext) ; return PLUS;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 72 "cminus.l"
+#line 68 "cminus.l"
 {printf(" %s -> MINUS \n", yytext) ; return MINUS;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 73 "cminus.l"
+#line 69 "cminus.l"
 {printf(" %s -> MULT \n", yytext) ; return MULT;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 74 "cminus.l"
+#line 70 "cminus.l"
 {printf(" %s -> DIVI \n", yytext) ; return DIVI;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 76 "cminus.l"
+#line 72 "cminus.l"
 {printf(" %s -> SEMI \n", yytext) ; return SEMI;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 77 "cminus.l"
+#line 73 "cminus.l"
 {printf(" %s -> COMMA \n", yytext) ; return COMMA;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 78 "cminus.l"
+#line 74 "cminus.l"
 {printf(" %s -> ASSIGN \n", yytext) ; return ASSIGN;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 79 "cminus.l"
+#line 75 "cminus.l"
 {printf(" %s -> EQUAL \n", yytext) ; return EQUAL;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 80 "cminus.l"
+#line 76 "cminus.l"
 {printf(" %s -> DIFF \n", yytext) ; return DIFF;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 81 "cminus.l"
+#line 77 "cminus.l"
 {printf(" %s -> LT \n", yytext) ; return LT;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 82 "cminus.l"
+#line 78 "cminus.l"
 {printf(" %s -> LET \n", yytext) ; return LET;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 83 "cminus.l"
+#line 79 "cminus.l"
 {printf(" %s -> GT \n", yytext) ; return GT;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 84 "cminus.l"
+#line 80 "cminus.l"
 {printf(" %s -> GET \n", yytext) ; return GET;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 87 "cminus.l"
+#line 83 "cminus.l"
 {printf(" %s -> LPAR \n", yytext) ; return LPAR;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 88 "cminus.l"
+#line 84 "cminus.l"
 {printf(" %s -> RPAR \n", yytext) ; return RPAR;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 89 "cminus.l"
+#line 85 "cminus.l"
 {printf(" %s -> LBRC \n", yytext) ; return LBRC;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 90 "cminus.l"
+#line 86 "cminus.l"
 {printf(" %s -> RBRC \n", yytext) ; return RBRC;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 91 "cminus.l"
+#line 87 "cminus.l"
 {printf(" %s -> LBRT \n", yytext) ; return LBRT;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 92 "cminus.l"
+#line 88 "cminus.l"
 {printf(" %s -> RBRT \n", yytext) ; return RBRT;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 94 "cminus.l"
-{printf(" %s -> NUM \n", yytext) ; numeros ++; return NUM;}
+#line 90 "cminus.l"
+{printf(" %s -> NUM \n", yytext) ; return NUM;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 95 "cminus.l"
-{printf(" %s -> ID \n", yytext) ; identificadores ++; return ID;}
+#line 91 "cminus.l"
+{printf(" %s -> ID \n", yytext) ; return ID;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 96 "cminus.l"
-{linhas ++; lineno++;}
+#line 92 "cminus.l"
+{ lineno++;}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 97 "cminus.l"
-{espacos ++;}
+#line 93 "cminus.l"
+{}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 99 "cminus.l"
+#line 95 "cminus.l"
 { char c;
                   while (1) {
                     c = input();
@@ -956,15 +952,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 109 "cminus.l"
-{printf("ERRO LÉXICO : %s LINHA: %d\n", yytext, lineno) ; erros ++; return ERROR;}
+#line 105 "cminus.l"
+{printf("ERRO LÉXICO : %s LINHA: %d\n", yytext, lineno) ; return ERROR;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 116 "cminus.l"
+#line 112 "cminus.l"
 ECHO;
 	YY_BREAK
-#line 968 "lex.yy.c"
+#line 964 "lex.yy.c"
 			case YY_STATE_EOF(INITIAL):
 				yyterminate();
 
@@ -1848,7 +1844,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 116 "cminus.l"
+#line 112 "cminus.l"
 
 
 			///////////////
@@ -1873,27 +1869,3 @@ TokenType getToken(void)
   }
   return currentToken;
 }
-
-/*int main(int argc, char **argv)
-{
-	if(argc == 2)
-	{
-		yyin = fopen(argv[1], "r");
-		if(yyin)
-		{
-			yylex();
-			printf("Identificadores: %d\nNumeros: %d\n", identificadores, numeros);
-			printf("Espacos: %d\nLinhas: %d\nErros: %d\n", espacos, yylineno, erros);
-		}
-		else
-		{
-			printf("[!] [ANALISADOR LEXICO] Arquivo de Entrada nao encontrado.\n");
-		}
-	}
-	else
-	{
-		printf("[!] [ANALISADOR LEXICO] Arquivo de Entrada nao especificado.\n");
-	}
-	
-	return 0;
-}*/

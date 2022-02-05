@@ -7,8 +7,8 @@
 /* 				Arquivo: cminus.l                   */
 /* 			Especificacao Lexica pra C-             */
 /*													*/
-/* 				Baseado na especificacao		    */
-/* 		lexica para TINY de Kenneth C. Louden 		*/
+/* 				Baseado no Compilador		    	*/
+/* 		  para TINY de Kenneth C. Louden 			*/
 /****************************************************/
 			
 			///////////////
@@ -19,10 +19,6 @@
 	#include "util.h"
 	#include "scan.h"
 
-int atual = 0;
-
-
-int numeros = 0, identificadores = 0, espacos = 0, erros = 0, linhas = 0;
 char tokenString[MAXTOKENLEN+1];
 
 
@@ -91,10 +87,10 @@ espaco  [\ \t]+
 "["             {printf(" %s -> LBRT \n", yytext) ; return LBRT;}
 "]"             {printf(" %s -> RBRT \n", yytext) ; return RBRT;}
 
-{numero}        {printf(" %s -> NUM \n", yytext) ; numeros ++; return NUM;}
-{identificador}    {printf(" %s -> ID \n", yytext) ; identificadores ++; return ID;}
-{novalinha}       {linhas ++; lineno++;}
-{espaco}    {espacos ++;}
+{numero}        {printf(" %s -> NUM \n", yytext) ; return NUM;}
+{identificador}    {printf(" %s -> ID \n", yytext) ; return ID;}
+{novalinha}       { lineno++;}
+{espaco}    {}
 
 "/*" { char c;
                   while (1) {
@@ -106,7 +102,7 @@ espaco  [\ \t]+
                   }
                 }
 				
-.               {printf("ERRO LÉXICO : %s LINHA: %d\n", yytext, lineno) ; erros ++; return ERROR;}
+.               {printf("ERRO LÉXICO : %s LINHA: %d\n", yytext, lineno) ; return ERROR;}
 
 
 
@@ -137,27 +133,3 @@ TokenType getToken(void)
   }
   return currentToken;
 }
-
-/*int main(int argc, char **argv)
-{
-	if(argc == 2)
-	{
-		yyin = fopen(argv[1], "r");
-		if(yyin)
-		{
-			yylex();
-			printf("Identificadores: %d\nNumeros: %d\n", identificadores, numeros);
-			printf("Espacos: %d\nLinhas: %d\nErros: %d\n", espacos, yylineno, erros);
-		}
-		else
-		{
-			printf("[!] [ANALISADOR LEXICO] Arquivo de Entrada nao encontrado.\n");
-		}
-	}
-	else
-	{
-		printf("[!] [ANALISADOR LEXICO] Arquivo de Entrada nao especificado.\n");
-	}
-	
-	return 0;
-}*/

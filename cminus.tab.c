@@ -69,12 +69,12 @@
 /* First part of user prologue.  */
 #line 17 "cminus.y"
 
-		#define YYPARSER /* distinguishes Yacc output from other code files */
+		#define YYPARSER /* Distingue saída do YACC de outros arquivos */
 		#include "globals.h"
+		
 		#include "util.h"
 		#include "scan.h"
-		#include "parse.h"
-		
+		#include "parse.h" 
 		#include <stdio.h>
 		#include <stdlib.h>
 		#include <ctype.h>
@@ -85,7 +85,7 @@
 		static char * savedName;
 		static int savedLineNo; 
 		static TreeNode * savedTree;
-		static int yylex(void); // added to ensure no conflict with lex
+		static int yylex(void); // evitar conflito com flex
 		
 		
 	
@@ -1834,34 +1834,4 @@ yyreturnlab:
 		yyparse();
 		return savedTree;
 	}
-	
-	/*
-	int main(int argc, char **argv)
-	{
-		if(argc == 2)
-		{
-			yyin = fopen(argv[1], "r");
-			if(!yyin)
-			{
-				printf("[!] [ANALISADOR SINTATICO] Arquivo de Entrada nao encontrado.\n");
-				return -1;
-			}
-			else
-			{
-				if(yyparse() == 0)
-				{
-					printf("[ANALISADOR SINTATICO] Programa Reconhecido\n");
-				}
-			}
-			
-			fclose(yinn);
-		}
-		else
-		{
-			printf("[!] [ANALISADOR SINTATICO] Arquivo de Entrada nao especificado.\n");
-		}
-		
-		return 0;
-	}
-	*/
 			

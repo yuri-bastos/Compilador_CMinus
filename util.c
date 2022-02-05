@@ -1,9 +1,20 @@
+/*						Alunos:						*/
+/*													*/
+/*			Yuri Sodre Bastos  - 140547				*/
+/*			Daniel de Souza Paiva - 140620			*/
+/*													*/
+/* 				Arquivo: util.c               	    */
+/* 		Funções de Utilidade para manipulação       */
+/*			 dos nós Árvore Sintática				*/
+/*													*/
+/* 				Baseado no Compilador		    	*/
+/* 		  para TINY de Kenneth C. Louden 			*/
+/****************************************************/
+
 #include "globals.h"
 #include "util.h"
 
-/* Procedure printToken prints a token
- * and its lexeme to the listing file
- */
+/* Procedimento printToken imprime um token e seu lexema */
  void printToken( TokenType token, const char* tokenString )
  { switch (token)
    { case ELSE:
@@ -42,9 +53,7 @@
    }
  }
 
-/* Function newStmtNode creates a new statement
- * node for syntax tree construction
- */
+/* Função newStmtNode cria um novo nó do tipo Statement */
 TreeNode * newStmtNode(StmtKind kind) {
   TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
   int i;
@@ -59,9 +68,7 @@ TreeNode * newStmtNode(StmtKind kind) {
   return t;
 }
 
-/* Function newExpNode creates a new expression
- * node for syntax tree construction
- */
+/* Função newExpNode cria um novo nó do tipo Expressão */
 TreeNode * newExpNode(ExpKind kind) {
   TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
   int i;
@@ -77,9 +84,7 @@ TreeNode * newExpNode(ExpKind kind) {
   return t;
 }
 
-/* Function newDeclNode creates a new declaration
- * node for syntax tree construction
- */
+/* Função newDeclNode cria um novo nó do tipo Declaração */
 TreeNode * newDeclNode(DeclKind kind) {
   TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
   int i;
@@ -96,9 +101,7 @@ TreeNode * newDeclNode(DeclKind kind) {
   return t;
 }
 
-/* Function copyString allocates and makes a new
- * copy of an existing string
- */
+/* Função copyString cria uma cópia de uma string existente */
 char * copyString(char * s)
 { int n;
   char * t;
@@ -111,23 +114,21 @@ char * copyString(char * s)
   return t;
 }
 
-/* Variable indentno is used by printTree to
- * store current number of spaces to indent
- */
+/* A variável indentno salva o número de identação para imprimir árvore e subárvores */
 static int indentno = 0;
 
-/* macros to increase/decrease indentation */
+/* Macros para aumentar/diminuir a identação */
 #define INDENT indentno+=2
 #define UNINDENT indentno-=2
 
-/* printSpaces indents by printing spaces */
+/* printSpaces faz identações imprimindo espaços */
 static void printSpaces(void) {
   int i;
   for (i=0;i<indentno;i++)
     fprintf(listing," ");
 }
 
-/* printType print types of funcions and variables */
+/* printType imprime tipos de função e de variáveis */
 void printTypes(TreeNode* tree) {
   if (tree->child[0] != NULL) {
     switch (tree->child[0]->type) {
@@ -158,9 +159,7 @@ void printTypes(TreeNode* tree) {
   }
 }
 
-/* procedure printTree prints a syntax tree to the
- * listing file using indentation to indicate subtrees
- */
+/* Procedimento printTree imprime a árvore sintática utilizando identação para designar subárvores */
 void printTree( TreeNode * tree )
 { int i;
   INDENT;

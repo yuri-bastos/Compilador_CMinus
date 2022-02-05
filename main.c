@@ -1,28 +1,33 @@
 /****************************************************/
-/* File: main.c                                     */
-/* Main program for TINY compiler                   */
-/* Compiler Construction: Principles and Practice   */
-/* Kenneth C. Louden                                */
+/*						Alunos:						*/
+/*													*/
+/*			Yuri Sodre Bastos  - 140547				*/
+/*			Daniel de Souza Paiva - 140620			*/
+/*													*/
+/* 				Arquivo: main.c	            	    */
+/* 	   Programa principal do Compilador de C-	    */
+/*			 										*/
+/*													*/
+/* 				Baseado no Compilador		    	*/
+/* 		  para TINY de Kenneth C. Louden 			*/
 /****************************************************/
 
 #include "globals.h"
 
-/* set NO_PARSE to TRUE to get a scanner-only compiler */
 #define NO_PARSE FALSE
-/* set NO_ANALYZE to TRUE to get a parser-only compiler */
 #define NO_ANALYZE TRUE
 
 #include "util.h"
 #include "scan.h"
 #include "parse.h"
 
-/* allocate global variables */
+/* Variáveis globais */
 int lineno = 0;
 FILE * source;
 FILE * listing;
 FILE * code;
 
-/* allocate and set tracing flags */
+/* Flags de Trace */
 int EchoSource = TRUE;
 int TraceScan = FALSE;
 int TraceParse = TRUE;
@@ -33,7 +38,7 @@ int Error = FALSE;
 
 int main( int argc, char * argv[] )
 { TreeNode * syntaxTree;
-  char pgm[120]; /* source code file name */
+  char pgm[120]; /* nome do arquivo fonte */
   if (argc != 2)
     { fprintf(stderr,"Use: %s <filename>\n",argv[0]);
       exit(1);
@@ -46,7 +51,7 @@ int main( int argc, char * argv[] )
   { fprintf(stderr,"Arquivo %s não encontrado\n",pgm);
     exit(1);
   }
-  listing = stdout; /* send listing to screen */
+  listing = stdout; /* carrega o arquivo para saída */
   fprintf(listing,"\n		Compilando em C-: %s\n\nAnálise Léxica/Sintática:\n\n",pgm);
 #if NO_PARSE
   while (getToken()!=ENDFILE);

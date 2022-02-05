@@ -1,16 +1,21 @@
 /****************************************************/
-/* File: parse.h                                    */
-/* The parser interface for the TINY compiler       */
-/* Compiler Construction: Principles and Practice   */
-/* Kenneth C. Louden                                */
+/*						Alunos:						*/
+/*													*/
+/*			Yuri Sodre Bastos  - 140547				*/
+/*			Daniel de Souza Paiva - 140620			*/
+/*													*/
+/* 				Arquivo: parse.h              	    */
+/* 	   Interface de Parser para Compilador C-       */
+/*			 										*/
+/*													*/
+/* 				Baseado no Compilador		    	*/
+/* 		  para TINY de Kenneth C. Louden 			*/
 /****************************************************/
 
 #ifndef _PARSE_H_
 #define _PARSE_H_
 
-/* Function parse returns the newly 
- * constructed syntax tree
- */
+/* Função parse retorna a árvore sintática criada */
 TreeNode * parse(void);
 
 #endif

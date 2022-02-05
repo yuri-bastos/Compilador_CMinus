@@ -1,10 +1,18 @@
 /****************************************************/
-/* File: globals.h                                  */
-/* Global types and vars for TINY compiler          */
-/* must come before other include files             */
-/* Compiler Construction: Principles and Practice   */
-/* Kenneth C. Louden                                */
+/*						Alunos:						*/
+/*													*/
+/*			Yuri Sodre Bastos  - 140547				*/
+/*			Daniel de Souza Paiva - 140620			*/
+/*													*/
+/* 				Arquivo: globals.h	           	    */
+/* 	     Tipos e Variáveis Globais para				*/
+/*				Compilador de C-	    			*/
+/*			 										*/
+/*													*/
+/* 				Baseado no Compilador		    	*/
+/* 		  para TINY de Kenneth C. Louden 			*/
 /****************************************************/
+
 
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
@@ -15,23 +23,18 @@
 #include <string.h>
 
 
-/* Yacc/Bison generates internally its own values
- * for the tokens. Other files can access these values
- * by including the tab.h file generated using the
- * Yacc/Bison option -d ("generate header")
- *
- * The YYPARSER flag prevents inclusion of the tab.h
- * into the Yacc/Bison output itself
+/* Yacc/Bison gera internamente seus próprios valores para os tokens.
+ * Otros arquivos podem acessar esses valores ao incluir o arquivo
+ * cminus.tab.h gerado
+ 
+ * A flag YYPARSER previne a inclusão do arquivo cminus.tab.h
+ * na propria saída Bison.
  */
 
 #ifndef YYPARSER
-
-/* the name of the following file may change */
 #include "cminus.tab.h"
 
-/* ENDFILE is implicitly defined by Yacc/Bison,
- * and not included in the tab.h file
- */
+/* ENDFILE é definido implicidamente pelo Yacc/Bison, e não é incluído no arquivo cminus.tab.h */
 #define ENDFILE 0
 #endif
 
@@ -43,77 +46,73 @@
 #define TRUE 1
 #endif
 
-/* MAXRESERVED = the number of reserved words */
+/* MAXRESERVED = número de palavras reservadas (Else, If, Int, While, Return, Void) */
 #define MAXRESERVED 6
 
 typedef int TokenType;
 
-extern FILE* source; /* source code text file */
-extern FILE* listing; /* listing output text file */
-extern FILE* code; /* code text file for TM simulator */
+extern FILE* source; /* Arquivo de Entrada */
+extern FILE* listing; /* Saída do programa */
+extern FILE* code; /* código para máquina de estados */
 
-extern int lineno; /* source line number for listing */
+extern int lineno; /* Linha do arquivo de entrada */
 
 /**************************************************/
-/***********   Syntax tree for parsing ************/
+/********  Árvore Sintática para o Parsing ********/
 /**************************************************/
 
-typedef enum {StmtK,ExpK, DeclK} NodeKind;
-typedef enum {IfK,WhileK,AssignK,ReturnK, CompK} StmtKind;
-typedef enum {OpK,ConstK,IdK,TypeK,ArrayK,CallK, CalcK} ExpKind;
-typedef enum {VarDeclK,ArrayDeclK, ArrayParDeclK, FunDeclK, FunParDeclK} DeclKind;
+typedef enum {StmtK,ExpK, DeclK} NodeKind;	//Tipo de nó 
+typedef enum {IfK,WhileK,AssignK,ReturnK, CompK} StmtKind; //Nó do tipo Statement
+typedef enum {OpK,ConstK,IdK,TypeK,ArrayK,CallK, CalcK} ExpKind; //Nó do tipo Expressão
+typedef enum {VarDeclK,ArrayDeclK, ArrayParDeclK, FunDeclK, FunParDeclK} DeclKind; //Nó do tipo Declaração
 
-/* ExpType is used for type checking */
+/* ExpType é usado para verificar o tipo da expressão */
 typedef enum {Void,Integer,ArrayInteger} ExpType;
 
 #define MAXCHILDREN 3
 
-struct ScopeListRec;
+struct ScopeListRec; 
 
-typedef struct ArrayAttribute { TokenType type; char * name; int size; } ArrAttr;
+typedef struct ArrayAttribute { TokenType type; char * name; int size; } ArrAttr; //Atributos de um Vetor
 
 typedef struct treeNode
-   { struct treeNode * child[MAXCHILDREN];
-     struct treeNode * sibling;
+   { struct treeNode * child[MAXCHILDREN]; // Nós filhos
+     struct treeNode * sibling; //Nós com mesma raiz
      int lineno;
      NodeKind nodekind;
-     union { StmtKind stmt; ExpKind exp; DeclKind decl;} kind;
-     union { TokenType type; TokenType op; int val; char * name; ArrAttr arr; struct ScopeListRec * scope;} attr;
-     ExpType type; /* for type checking of exps */
+     union { StmtKind stmt; ExpKind exp; DeclKind decl;} kind; //Tipo de Nó
+     union { TokenType type; TokenType op; int val; char * name; ArrAttr arr; struct ScopeListRec * scope;} attr; //Todas as informações deste nó
+     ExpType type; //Tipo da expressão
    } TreeNode;
 
 /**************************************************/
-/***********   Flags for tracing       ************/
+/***********   Flags para o tracing       *********/
 /**************************************************/
 
-/* EchoSource = TRUE causes the source program to
- * be echoed to the listing file with line numbers
- * during parsing
+/* EchoSource = TRUE faz com que o programa de entrada seja passado
+	para a saída com o número de cada linha durante o parsing.
  */
 extern int EchoSource;
 
-/* TraceScan = TRUE causes token information to be
- * printed to the listing file as each token is
- * recognized by the scanner
+/* TraceScan = TRUE faz com que as informações do token a ser impresso sejam
+ movidos para a saída assim que o token é reconhecido pelo scanner.
  */
 extern int TraceScan;
 
-/* TraceParse = TRUE causes the syntax tree to be
- * printed to the listing file in linearized form
- * (using indents for children)
+/* TraceParse = TRUE faz com que a árvore sintática a ser impressa utilize
+   a identação criada.
  */
 extern int TraceParse;
 
-/* TraceAnalyze = TRUE causes symbol table inserts
- * and lookups to be reported to the listing file
+/* TraceAnalyze = TRUE faz com que a tabela de símbolos seja inserida na saída, e então impressa
  */
 extern int TraceAnalyze;
 
-/* TraceCode = TRUE causes comments to be written
- * to the TM code file as code is generated
+/* TraceCode = TRUE faz com que os comentários sejam escritos no código da máquina de estados
+ enquanto o código é gerado
  */
 extern int TraceCode;
 
-/* Error = TRUE prevents further passes if an error occurs */
+/* Error = TRUE impede a execução ao detectar um erro */
 extern int Error; 
 #endif
