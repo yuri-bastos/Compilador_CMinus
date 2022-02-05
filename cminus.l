@@ -30,7 +30,7 @@ digito       [0-9]
 numero      {digito}+
 letra      [a-zA-Z]
 identificador  {letra}+
-novalinha     [ \n]
+novalinha    \n
 espaco  [\ \t]+
 
 

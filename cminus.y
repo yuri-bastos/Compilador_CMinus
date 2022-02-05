@@ -29,7 +29,7 @@
 		#define YYSTYPE TreeNode *
 		static int savedNumber;
 		static char * savedName;
-		static int savedLineNo; 
+		static int savedLineNo = 0; 
 		static TreeNode * savedTree;
 		static int yylex(void); // evitar conflito com flex
 		
@@ -51,6 +51,9 @@
 			////REGRAS////
 			/////////////
 
+	//Regra 1: savedTree = $1; (salvar a árvore sintática)
+	//Regras que terminam em um tipo dessa regra e/ou não-terminal: $$ = $1 e/ou criar novo node.
+	//Regras que possuem recursividade: YYSTYPE t = $1; if (t != NULL) { while (t->sibling != NULL) { t = t->sibling; } t->sibling = $3; $$ = $1; } else { $$ = $2; }
 	
 	programa : declaracao-lista {savedTree = $1;}
 		;
