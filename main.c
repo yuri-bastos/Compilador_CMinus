@@ -38,30 +38,30 @@ int Error = FALSE;
 
 int main( int argc, char * argv[] )
 { TreeNode * syntaxTree;
-  char pgm[120]; /* nome do arquivo fonte */
-  if (argc != 2)
-    { fprintf(stderr,"Use: %s <filename>\n",argv[0]);
-      exit(1);
-    }
-  strcpy(pgm,argv[1]) ;
-  if (strchr (pgm, '.') == NULL)
-     strcat(pgm,".cm");
-  source = fopen(pgm,"r");
-  if (source==NULL)
-  { fprintf(stderr,"Arquivo %s não encontrado\n",pgm);
-    exit(1);
-  }
-  listing = stdout; /* carrega o arquivo para saída */
-  fprintf(listing,"\n		Compilando em C-: %s\n\nAnálise Léxica/Sintática:\n\n",pgm);
+	char pgm[120]; /* nome do arquivo fonte */
+	if (argc != 2)
+		{ fprintf(stderr,"Use: %s <filename>\n",argv[0]);
+			exit(1);
+		}
+	strcpy(pgm,argv[1]) ;
+	if (strchr (pgm, '.') == NULL)
+		 strcat(pgm,".cm");
+	source = fopen(pgm,"r");
+	if (source==NULL)
+	{ fprintf(stderr,"Arquivo %s não encontrado\n",pgm);
+		exit(1);
+	}
+	listing = stdout; /* carrega o arquivo para saída */
+	fprintf(listing,"\n		Compilando em C-: %s\n\nAnálise Léxica/Sintática:\n\n",pgm);
 #if NO_PARSE
-  while (getToken()!=ENDFILE);
+	while (getToken()!=ENDFILE);
 #else
-  syntaxTree = parse();
-  if (TraceParse) {
-    fprintf(listing,"\n-------------------\nÁRVORE SINTÁTICA:\n-------------------\n");
-    printTree(syntaxTree);
-  }
+	syntaxTree = parse();
+	if (TraceParse) {
+		fprintf(listing,"\n-------------------\nÁRVORE SINTÁTICA:\n-------------------\n");
+		printTree(syntaxTree);
+	}
 #endif
-  fclose(source);
-  return 0;
+	fclose(source);
+	return 0;
 }
