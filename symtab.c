@@ -136,6 +136,9 @@ void insert_ST(char * name,  int lineno, int loc, ScopeName scope, ExpType dType
 /* Imprime a tabela de hash no formato da tabela de simbolos
  * propria e graficamente dita. usa o mesmo arquivo de saida
  * listing usado pelas demais partes do compilador
+ * 
+ *  Args:
+ *   listing = arquivo de saida de trace
  */
 void print_ST(FILE *listing){
     int i;
