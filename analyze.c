@@ -12,12 +12,20 @@
 /* 		  para TINY de Kenneth C. Louden 			*/
 /****************************************************/
 
+/* IMPORTANTE:
+Conferir Declaracoes:
+ se tree->nodekind == StmtK
+
+
+
+ */
 
 #include "globals.h"
 #include "symtab.h"
 #include "analyze.h"
+#include "util.h"
 
 /*Contador para as localizacoes de memoria das variaveis*/
-static int memLoc = 0; 
+static int currMem = 0; 
 
 

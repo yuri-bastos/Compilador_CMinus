@@ -71,7 +71,8 @@ typedef enum {Void,Integer,ArrayInteger} ExpType;
 
 #define MAXCHILDREN 3
 
-struct ScopeListRec; 
+/* String do Escopo/Funcao*/
+typedef char* ScopeName;
 
 typedef struct ArrayAttribute { TokenType type; char * name; int size; } ArrAttr; //Atributos de um Vetor
 
@@ -81,7 +82,7 @@ typedef struct treeNode
      int lineno;
      NodeKind nodekind;
      union { StmtKind stmt; ExpKind exp; DeclKind decl;} kind; //Tipo de Nó
-     union { TokenType type; TokenType op; int val; char * name; ArrAttr arr; struct ScopeListRec * scope;} attr; //Todas as informações deste nó
+     union { TokenType type; TokenType op; int val; char * name; ArrAttr arr; ScopeName scope;} attr; //Todas as informações deste nó
      ExpType type; //Tipo da expressão
    } TreeNode;
 

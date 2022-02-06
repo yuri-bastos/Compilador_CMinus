@@ -16,10 +16,12 @@
 
 #define NO_PARSE FALSE
 #define NO_ANALYZE TRUE
+#define NO_CODE TRUE
 
 #include "util.h"
 #include "scan.h"
 #include "parse.h"
+#include "analyze.h"
 
 /* Variáveis globais */
 int lineno = 0;
@@ -60,6 +62,14 @@ int main( int argc, char * argv[] )
 	if (TraceParse) {
 		fprintf(listing,"\n-------------------\nÁRVORE SINTÁTICA:\n-------------------\n");
 		printTree(syntaxTree);
+	}
+#endif
+#if NO_ANALYZE
+	/*  */
+#else
+	if (TraceAnalyze) {
+		fprintf(listing,"\n-------------------\nTABELA DE SIMBOLOS:\n------------------\n");
+		print_ST(listing)
 	}
 #endif
 	fclose(source);
