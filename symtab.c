@@ -32,6 +32,9 @@ int hash(char* key){
     return temp;
 }
 
+/* Tabela de Hash que estrutura a tabela de simbolos */
+static bucketList hashTable[SIZE];
+
 /* Busca o end da lista de baldes de um Simbolo: 
  * caso encontre: retorna a lista
  * caso nao encontre: retorna NULL
@@ -53,9 +56,6 @@ bucketList search_ST(char *name, ScopeName scope){
     
     return l;
 }
-
-/* Tabela de Hash que estrutura a tabela de simbolos */
-static bucketList hashTable[SIZE];
 
 /* Insere na tabela de simbolos (tabela hash) um simbolo, colocando
  * seu escopo, local de memoria e atualizando os numeros de linha.
