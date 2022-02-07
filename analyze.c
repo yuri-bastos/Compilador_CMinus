@@ -78,7 +78,7 @@ void insertNode(TreeNode * tree)
         case ReturnK://Conferir retorno
             if (search_ST(currScope, "\0")->dataType == Void && tree->child[0] != NULL) //funcoes sao do escopo \0
             {
-                fprintf(listing, "Erro Semantico: ")
+                fprintf(listing, "Erro Semantico: ");
             }
                 
             
