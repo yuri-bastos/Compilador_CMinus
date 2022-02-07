@@ -13,3 +13,5 @@ void main(void)
   x = input() + input();
   output(gcd(x, y));
 }
+
+return;

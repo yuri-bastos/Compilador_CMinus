@@ -32,37 +32,6 @@ int hash(char* key){
     return temp;
 }
 
-/* Lista encadeada que armazena o numero das linhas e a pos do prox item */
-typedef struct linkedList{
-    int lineno;
-    struct linkedList *next;
-} *lineList;
-
-/* lista de baldes: contem listas dentro delas
- * Chaves:
-    name = nome do simbolo
-    lines = lista encadeada de linhas
-    memloc = local de memoria
-    scope = escopo do simbolo
-    dataType = tipo do dado (int ou void)
-    idType = tipo do id (fun var array)
-    next = ponteiro pro prox elem
- */
-typedef struct bList{
-    /* Chaves: */
-    char *name; //Nome do simbolo
-    lineList lines; //Lista encadeada que marca as linhas de ocorrencia desse ID
-    int memloc; //pos de memoria desse simbolo
-    ScopeName scope; //Escopo do simbolo
-    ExpType dataType; //Tipo do Dado(Int, Void) //Void, Integer, Array Integer
-    DeclKind idType; //Tipo do ID(var fun array) //Usando como guia: DeclKind (Aqui eh o tipo que foi declarado para consultas futuras)
-    //Obs.: usamos declKind pois o que conta em um simbolo eh como ele foi declarado, 
-    //caso nao tenha declaracao previa, ja identifica um erro...
-    
-    /* Ponteiro pro prox: */
-    struct bList *next;
-} *bucketList;
-
 /* Busca o end da lista de baldes de um Simbolo: 
  * caso encontre: retorna a lista
  * caso nao encontre: retorna NULL

@@ -20,7 +20,7 @@ O que é melhor??
 -> Preciso conferir o escopo para um return...
 -> CalcK -> Olhar 
 -> FunDeclK -> Olhar tree->child[0] que tem o tipo de dado dela!! (Observar se ela ja existe e jogar erro de redefinicao de funcao)
-
+->DeclK -> tree->child[0]->type armazena o tipo 
 
  */
 
@@ -29,18 +29,15 @@ O que é melhor??
 #include "analyze.h"
 #include "util.h"
 
-typedef struct ScopeSStack{
-    ScopeName scope;
-    struct ScopeSStack *prev;
-} *scopeStack;
+static void semanticError(TreeNode * tree, char *msg)
+{
+    fprintf(listing, "ERRO SEMANTICO: ")
+}
 
 
-
-
-
-
-/*Contador para as localizacoes de memoria das variaveis*/
-static int currMem = 0; 
+/*Contadores para localizao de memoria e escopo atual*/
+static int currMem = 0;
+static ScopeName currScope = "global";
 
 /* "Procedure traverse is a generic recursive 
  * syntax tree traversal routine:
@@ -64,15 +61,26 @@ static void traverse( TreeNode * tree, void (* preProc) (TreeNode *), void (* po
   }
 }
 
-
+/* 
+ * FALTA
+ * COMENTARIO
+ * 
+ */  
 void insertNode(TreeNode * tree)
 {
+    if(Error = TRUE) return;
+
     switch (tree->nodekind)
     {
     case StmtK:
         switch (tree->kind.stmt)
         {
-        case ReturnK:
+        case ReturnK://Conferir retorno
+            if (search_ST(currScope, "\0")->dataType == Void && tree->child[0] != NULL) //funcoes sao do escopo \0
+            {
+                fprintf(listing, "Erro Semantico: ")
+            }
+                
             
             break;
         
@@ -85,8 +93,6 @@ void insertNode(TreeNode * tree)
         break;
     }
 }
-
-
 
 
 
@@ -107,6 +113,6 @@ static void nullProc(TreeNode * tree){
 }
 
 
-void build_ST(TreeNode * tree){ 
+void build_ST(TreeNode * tree){
     traverse(tree, insertNode, nullProc);
 }
