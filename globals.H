@@ -109,6 +109,10 @@ extern int TraceParse;
  */
 extern int TraceAnalyze;
 
+/* TraceAnalyze = TRUE faz com que a tabela de símbolos seja inserida na saída, e então impressa
+ */
+extern int TraceAnalyze_DETAIL;
+
 /* TraceCode = TRUE faz com que os comentários sejam escritos no código da máquina de estados
  enquanto o código é gerado
  */

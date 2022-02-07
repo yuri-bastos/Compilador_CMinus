@@ -8,10 +8,9 @@ int gcd (int u, int v)
 }
 
 void main(void)
-{ int x; int y;
+{ int x; int y[11];
+  x[gcd()] =  y;
   x = input (); y = input (); /*modificacao para teste do analyze*/
   x = input() + input();
   output(gcd(x, y));
 }
-
-return;
