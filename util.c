@@ -14,17 +14,15 @@
 #include "globals.h"
 #include "util.h"
 
-/* Procedimento printToken imprime um token e seu lexema */
+/* Procedimento printToken imprime um token*/
  void printToken( TokenType token, const char* tokenString )
  { switch (token)
-   { case ELSE:
-     case IF:
-     case INT:
-     case RETURN:
-     case VOID:
-     case WHILE:
-       fprintf(listing, "palavra reservada: %s\n",tokenString);
-       break;
+   { case ELSE: fprintf(listing, "ELSE\n"); break;
+     case IF: fprintf(listing, "IF\n"); break;
+     case INT: fprintf(listing, "INT\n"); break;
+     case RETURN: fprintf(listing, "RETURN\n"); break;
+     case VOID: fprintf(listing, "VOID\n"); break;
+     case WHILE: fprintf(listing, "WHILE\n"); break;
      case PLUS:     fprintf(listing, "+\n");  break;
      case MINUS:    fprintf(listing, "-\n");  break;
      case MULT:    fprintf(listing, "*\n");  break;
