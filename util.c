@@ -160,6 +160,7 @@ void printTypes(TreeNode* tree) {
 /* Procedimento printTree imprime a árvore sintática utilizando identação para designar subárvores */
 void printTree( TreeNode * tree )
 { int i;
+  if(Error == TRUE) return;
   INDENT;
   while (tree != NULL) {
 
