@@ -74,6 +74,7 @@ int main( int argc, char * argv[] )
 	if(Error == FALSE){
 		fprintf(listing,"\n\n>Analise Semantica:\n\n");
 		build_ST(syntaxTree);
+		check_ST(syntaxTree);
 		if (TraceAnalyze) {
 			if(Error == FALSE)
 			{

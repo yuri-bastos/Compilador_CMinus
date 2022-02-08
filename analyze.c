@@ -13,16 +13,7 @@
 /****************************************************/
 
 /* IMPORTANTE:
-Como carambolas eu posso manter track do escopo atual pra checar o retorno???
-Usar uma pilha?
-O que é melhor??
-
--> Preciso conferir o escopo para um return...
-->
-Depois:
-CalcK -> Olhar os tipos dos dois filhos (se forem funcoes!!):
-(Se kind.exp for CallK, procurar o tipo dela no escopo), se for VOID da erro
-
+FALTA VER COMO MANTER CONTAGEM DA QUANTIDADE DE PARAMETROS QUE UMA FUNCAO ACEITA
 
 CallK ->Ver se a funcao existe!
 
@@ -148,12 +139,15 @@ static void checkMain()
  */
 static void traverse( TreeNode * tree, void (* preProc) (TreeNode *), void (* postProc) (TreeNode *) )
 { if (tree != NULL)
-  { preProc(tree);
+  { 
+    preCheckScopeStart(tree);
+    preProc(tree);
     { int i;
       for (i=0; i < MAXCHILDREN; i++)
         traverse(tree->child[i],preProc,postProc);
     }
     postProc(tree);
+    postCheckScopeEnd(tree);
     traverse(tree->sibling,preProc,postProc);
   }
 }
@@ -199,25 +193,43 @@ static void nullProc(TreeNode * tree){
  */  
 void insertTNode(TreeNode * tree)
 {
-    if(Error = TRUE) return; //Parar insercao se já tiver dado erro
-
+    if(Error == TRUE) return; //Parar insercao se já tiver dado erro
+    
     switch (tree->nodekind)
     {
     case DeclK:
+         
         switch (tree->kind.decl)
         {
-        case FunDeclK://Verificar se ja foi declarada      
+        case FunDeclK://Verificar se ja foi declarada 
             if(search_ST(tree->attr.name, "\0") == 0)//Funcoes sao armazenadas no escopo "\0"
             {//nao foi declarada, inserir entao
-
+                insert_ST(tree->attr.name, tree->lineno, currMem++, "\0", tree->child[0]->type, FunDeclK);
+            } else{
+                semanticErr(tree, tree->attr.name, currScope, "Redeclaracao de funcao");
             }
             break;
 
-        case VarDeclK://          
-            
+        case VarDeclK://
+            if(getTypes(tree) == Void) 
+                semanticErr(tree, tree->attr.name, currScope, "Declaracao invalida: Variavel nao pode ser do tipo void !");      
+            else if(search_ST(tree->attr.name, currScope) != 0)
+                semanticErr(tree, tree->attr.name, currScope, "Redeclaracao de variavel");
+            else if(search_ST(tree->attr.name, "\0") != 0)
+                semanticErr(tree, tree->attr.name, currScope, "Declaracao invalida, esta variavel ja foi declarada como ID de funcao");
+            else
+                insert_ST(tree->attr.name, tree->lineno, currMem++, currScope, Integer, VarDeclK);
             break;
         
         case ArrayDeclK://
+            fprintf(listing, "%d", 0 == search_ST(tree->attr.arr.name, currScope));
+            if(getTypes(tree) == Void)
+                semanticErr(tree,tree->attr.arr.name, currScope, "Declaracao invalida: Array nao pode ser do tipo void !");
+            else if(search_ST(tree->attr.arr.name, currScope) != 0)
+                semanticErr(tree, tree->attr.name, currScope, "Redeclaracao de Array");
+            else if(search_ST(tree->attr.arr.name, "\0") != 0)
+                semanticErr(tree, tree->attr.arr.name, currScope, "Declaracao invalida, este array ID ja foi declarado como ID de funcao");
+            else 
             
             break;
         
@@ -226,6 +238,7 @@ void insertTNode(TreeNode * tree)
         }
         break;
     
+
     default:
         break;
     }
@@ -257,7 +270,7 @@ void checkTNode(TreeNode * tree)
             if (tree->child[1]->kind.exp == CallK)
             {//Se for do tipo chamada de funcao, verificar o retorno das mesmas 
                 if(getDataType(tree->child[1]->attr.name, "\0") == Void)
-                    semanticErr(tree, tree->attr.name, currScope, "Funcao de retorno void nao pode ser atribuida a variavel do tipo int");
+                    semanticErr(tree, tree->child[1]->attr.name, currScope, "Funcao de retorno void nao pode ser atribuida a variavel do tipo int");
             } 
             break;
 
@@ -330,19 +343,16 @@ void checkTNode(TreeNode * tree)
 void insertGlobals(int loc)
 {
     insert_ST("input",-1,loc++,"\0",Integer,FunDeclK);
-    insert_ST("output",-1,loc,"\0",Integer,FunDeclK);
+    insert_ST("output",-1,loc,"\0",Void,FunDeclK);
 }
 
 
 void build_ST(TreeNode * tree){
     insertGlobals(currMem+=2);
-    insert_ST("main",-1,currMem++,"\0",Void,FunDeclK);
-    checkMain();
-    traverse(tree, nullProc, checkTNode);
-    
+    traverse(tree, nullProc, insertTNode);
 }
 
-
-/* void typeCheck_ST(TreeNode * tree){
+void check_ST(TreeNode * tree){
+    checkMain();
     traverse(tree, nullProc, checkTNode);
-} */
+}

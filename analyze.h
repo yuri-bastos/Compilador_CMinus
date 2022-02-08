@@ -144,6 +144,6 @@ void insertGlobals(int loc);
 
 void build_ST(TreeNode * tree);
 
-void typeCheck_ST(TreeNode * tree);
+void check_ST(TreeNode * tree);
 
 #endif

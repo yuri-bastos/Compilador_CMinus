@@ -188,7 +188,7 @@ void print_ST(FILE *listing){
                     }
                     fprintf(listing, "%-9s  ", dtStr);//Imprimindo o tipo do dado
 
-                    fprintf(listing, "%-5d  ", l->memloc);//Imprimindo o local de memoria
+                    fprintf(listing, "%-6d  ", l->memloc);//Imprimindo o local de memoria
                     
                     //Impressao dos num das linhas:
                     lineList line = l->lines;
@@ -221,6 +221,24 @@ ExpType getDataType(char *name, ScopeName scope)
     bucketList l = hashTable[h]; //l = lista para o indice da tabela rel ao dado simbolo
     while(l != NULL){
         if ((strcmp(l->name, name) == 0) && (l->scope == scope)) return l->dataType;
+        l = l->next;
+    }
+
+    return -1;//error
+}
+
+DeclKind getIDType(char *name, ScopeName scope)
+{
+    char key[300] = "";
+    strcat(key,name);//concatenando o nome na chave
+    strcat(key,scope);//concatenando o escopo na chave
+    
+    int h = hash(key);//h = valor de hashing p pos na tabela
+    //IMPORTANTE: No caso de chamada ou declaracao de funcao, scope vira como "\0"
+    //desse modo, seu hash é 0 e nao impacta no hash do nome da funcao
+    bucketList l = hashTable[h]; //l = lista para o indice da tabela rel ao dado simbolo
+    while(l != NULL){
+        if ((strcmp(l->name, name) == 0) && (l->scope == scope)) return l->idType;
         l = l->next;
     }
 
