@@ -98,8 +98,17 @@ void print_ST(FILE *listing);
 
 ExpType getDataType(char *name, ScopeName scope);
 
-DeclKind IDType(char *name, ScopeName scope);
+DeclKind getIDType(char *name, ScopeName scope);
 
 TreeNode * getFuncNode(char *funcName);
+
+funParsList getFuncParams_ST(char *funcName);
+
+/*
+ * 0 -> sem erros
+ * 1 -> Muitos parametros para chamar a funcao
+ * 2 -> Tipos dos parametros incompativeis
+ */
+int compParamLists(char *funcName, funParsList callParams);
 
 #endif

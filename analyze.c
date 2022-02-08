@@ -202,7 +202,7 @@ void insertTNode(TreeNode * tree)
 {
     if(Error == TRUE) return; //Parar insercao se já tiver dado erro
     TreeNode * treeAux;
-    funParsList declParams = NULL;
+    funParsList declParams = NULL, currParams = NULL;
     switch (tree->nodekind)
     {
     case DeclK:
@@ -217,24 +217,26 @@ void insertTNode(TreeNode * tree)
             {//nao foi declarada, inserir entao
                 
                 if(tree->child[1]->attr.name != NULL){//Se existe parametros
-                    treeAux = tree->child[1];//percorrer os parametros (tem que garantir que eles n sao tipo void...)
                     declParams = (funParsList) malloc(sizeof(struct parListK));
+                    currParams = declParams;
+                    treeAux = tree->child[1];//percorrer os parametros (tem que garantir que eles n sao tipo void...)
                     while (treeAux != NULL)
                     {
-                        if(treeAux->child[0]->type == Void){
-                            semanticErr(treeAux, treeAux->attr.name, currScope, "Declaracao de Parametro Invalida: Parametro de Variavel ou Parametro Array nao podem ser tipo void!");
+                        if(treeAux->child[0]->type == Void){//declaracao de paramentro do tipo void!
+                            semanticErr(treeAux, treeAux->attr.name, currScope, "FUN DECL Declaracao de Parametro Invalida: Parametro de Variavel ou Parametro Array nao podem ser tipo void!");
                             return;
-                        } else {
-                            fprintf(listing, "IHAA");
-                            
+                        } else {//ok, inserir na lista
+                            currParams->par = treeAux->kind.decl;
+                            currParams->next = (funParsList) malloc(sizeof(struct parListK));;
+                            currParams = currParams->next; 
                         }
                         treeAux = treeAux->sibling;
                     }
-                    
                 }else{
                     declParams = NULL;
                 }
                 insert_ST(tree->attr.name, tree->lineno, currMem++, "\0", tree->child[0]->type, FunDeclK, tree, declParams);
+            
             } else{
                 semanticErr(tree, tree->attr.name, currScope, "Redeclaracao de funcao");
             }
@@ -254,19 +256,71 @@ void insertTNode(TreeNode * tree)
         case ArrayDeclK://Vetores
             if(getTypes(tree) == Void)
                 semanticErr(tree,tree->attr.arr.name, currScope, "Declaracao invalida: Array nao pode ser do tipo void !");
-            else if(search_ST(tree->attr.arr.name, currScope) != 0)
-                semanticErr(tree, tree->attr.name, currScope, "Redeclaracao de Array");
+            else if(search_ST(tree->attr.arr.name, currScope) != 0){//ja declarado
+                if(getIDType(tree->attr.arr.name, currScope) != ArrayDeclK)//se o que existe nao for do tipo array...
+                    semanticErr(tree, tree->attr.arr.name, currScope, "Redeclaracao de Variavel como Array");
+                else
+                    semanticErr(tree, tree->attr.arr.name, currScope, "Redeclaracao de Array");
+            }
             else if(search_ST(tree->attr.arr.name, "\0") != 0)
                 semanticErr(tree, tree->attr.arr.name, currScope, "Declaracao invalida, este array ID ja foi declarado como ID de funcao");
             else 
                 insert_ST(tree->attr.arr.name, tree->lineno, currMem++, currScope, ArrayInteger, ArrayDeclK, tree, NULL);
             break;
+
+        case ArrayParDeclK://Vetores como parametro
+            if(getTypes(tree) == VOID) //Checando se nao eh void...
+                semanticErr(tree, tree->attr.name, currScope, "Declaracao invalida: Array nao pode ser do tipo void !");
+            else if(search_ST(tree->attr.name, currScope) != 0){//ja declarado
+                if(getIDType(tree->attr.name, currScope) != ArrayDeclK)//se o que existe nao for do tipo array...
+                    semanticErr(tree, tree->attr.name, currScope, "Redeclaracao de Variavel como Array");
+                else
+                    semanticErr(tree, tree->attr.name, currScope, "Redeclaracao de Array");
+            }
+            else if(search_ST(tree->attr.name, "\0") != 0)
+                semanticErr(tree, tree->attr.name, currScope, "Declaracao invalida, este array ID ja foi declarado como ID de funcao");
+            else 
+                insert_ST(tree->attr.name, tree->lineno, currMem++, currScope, ArrayInteger, ArrayDeclK, tree, NULL);
+            break;
+
+        case FunParDeclK://Verificar: Declaracao como funcao ou variavel, verificar declaracao como void
+            if (tree->child[0] == NULL) break;
+            
+            if(tree->child[0]->attr.name != NULL && tree->child[0]->type == Void)
+                semanticErr(tree, tree->attr.name, currScope, "FUNPARDECLDeclaracao invalida: Variavel nao pode ser do tipo void !");      
+            else if(search_ST(tree->attr.name, currScope) != 0)
+                semanticErr(tree, tree->attr.name, currScope, "Redeclaracao de variavel");
+            else if(search_ST(tree->attr.name, "\0") != 0)
+                semanticErr(tree, tree->attr.name, currScope, "Declaracao invalida, esta variavel ja foi declarada como ID de funcao");
+            else
+                insert_ST(tree->attr.name, tree->lineno, currMem++, currScope, Integer, VarDeclK, tree, NULL);
+            break;
         
+
         default:
             break;
         }
         break;
-    
+
+    case ExpK:
+
+        switch (tree->kind.exp)
+        {
+        case IdK: //Caso de uso de variavel
+            if(search_ST(tree->attr.name, currScope) == 0 && search_ST(tree->attr.name, "global") == 0)
+                semanticErr(tree, tree->attr.name, currScope, "Uso de ID nao declarado!!");
+            else if(tree->child[0] == NULL && getIDType(tree->attr.name, currScope) == ArrayDeclK)
+                semanticErr(tree, tree->attr.name, currScope, "Chamada de ID do tipo Array SEM especificacao de index (Esperado: ID[expressao])");
+            else
+                insert_ST(tree->attr.name, tree->lineno, currMem++, currScope, 0, 0, NULL, NULL);
+            break;
+        
+        case CallK:
+            fprintf(listing, "FUNCAO: %s em %d\n",tree->attr.name, tree->lineno);
+            break;
+        default:
+            break;
+        }
 
     default:
         break;
@@ -348,7 +402,7 @@ void checkTNode(TreeNode * tree)
             {
                 if(getDataType(tree->child[2]->attr.name, "\0") == Void)
                     semanticErr(tree, tree->child[2]->attr.name, currScope, "Funcao de retorno void nao pode ser operando");
-            }
+            } 
             break;
         
         default:

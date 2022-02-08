@@ -106,13 +106,6 @@ void insert_ST(char * name,  int linenum, int loc, ScopeName scope, ExpType dTyp
         l->funcPars = params;
 
     } else{ //Atualizar numero de linhas de ocorrencia
-        if (l->lines == NULL) //Usado para o caso especifico das funcoes input e output
-        {    
-            l->lines = (lineList) malloc(sizeof(struct lineListK)); //alocando espaco pra lista
-            l->lines->lineNum = linenum;
-            l->lines->next = NULL;
-            return;
-        }
         lineList line = l->lines;
         while (line->next != NULL) line = line->next;
         line->next = (lineList) malloc(sizeof(struct lineListK));
@@ -200,7 +193,7 @@ void print_ST(FILE *listing){
                     {
                         if (line->lineNum != -1)
                         {
-                            fprintf(listing, "%2d", line->lineNum);
+                            fprintf(listing, "%2d ", line->lineNum);
                         }                        
                         line = line->next;
                     }
@@ -266,4 +259,59 @@ TreeNode * getFuncNode(char *funcName)
     }
 
     return NULL;//error
+}
+
+funParsList getFuncParams_ST(char *funcName)
+{
+    char key[300] = "";
+    strcat(key,funcName);//concatenando o nome na chave
+    strcat(key,"\0");//concatenando o escopo na chave
+    
+    int h = hash(key);//h = valor de hashing p pos na tabela
+    //IMPORTANTE: No caso de chamada ou declaracao de funcao, scope vira como "\0"
+    //desse modo, seu hash é 0 e nao impacta no hash do nome da funcao
+    
+    bucketList l = hashTable[h]; //l = lista para o indice da tabela rel ao dado simbolo
+    while(l != NULL){
+        if ((strcmp(l->name, funcName) == 0) && (l->scope == "\0")) return l->funcPars;
+        l = l->next;
+    }
+    
+    return NULL;//Nao encontrado->ERROR
+}
+
+/*
+ * 0 -> sem erros
+ * 1 -> Muitos parametros para chamar a funcao
+ * 2 -> Tipos dos parametros incompativeis
+ */
+int compParamLists(char *funcName, funParsList callParams)
+{
+    int sizeDecl = 0, sizeCall = 0;
+    funParsList funcPars = getFuncParams_ST(funcName);
+    funParsList aux1 = funcPars, aux2 = callParams;
+
+    while (aux1->next != NULL)
+    {
+        sizeDecl++;
+        aux1=aux1->next;
+    }
+    while (aux2->next != NULL)
+    {
+        sizeCall++;
+        aux2=aux2->next;
+    }
+
+    if (sizeDecl != sizeCall) return 1; //erro do tipo muitos parametros chamados
+    else
+    {   aux1 = funcPars;
+        aux2 = callParams;
+        while (aux1->next != NULL)
+        {
+            if(aux1->par != aux2->par) return 2; //erro do tipo parametros incompativeis
+            aux1=aux1->next;
+            aux2=aux2->next;
+        }
+    }
+    return 0;//passou
 }

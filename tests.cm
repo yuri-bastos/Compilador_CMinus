@@ -1,6 +1,13 @@
 int A;
 
+int test(void)
+{
+    int b;
+    b = A;
+}
+
 void main(void)
 {
-
+    int b; int a;
+    a = b;
 }
