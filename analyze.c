@@ -215,11 +215,14 @@ void insertTNode(TreeNode * tree)
             
             if(search_ST(tree->attr.name, "\0") == 0)//Funcoes sao armazenadas no escopo "\0"
             {//nao foi declarada, inserir entao
-                insert_ST(tree->attr.name, tree->lineno, currMem++, "\0", tree->child[0]->type, FunDeclK, tree, declParams);
+                
                 if(tree->child[1]->attr.name != NULL){//Se existe parametros
-                    treeAux = tree->child[1];
-                    fprintf(listing, "ArgFound");
-                }else{fprintf(listing, "NoArgs");}
+                    treeAux = tree->child[1];//percorrer os parametros (tem que garantir que eles n sao tipo void...)
+                    check_ST(tree->child[1]);
+                }else{
+                    declParams = NULL;
+                }
+                insert_ST(tree->attr.name, tree->lineno, currMem++, "\0", tree->child[0]->type, FunDeclK, tree, declParams);
             } else{
                 semanticErr(tree, tree->attr.name, currScope, "Redeclaracao de funcao");
             }
@@ -382,6 +385,6 @@ void build_ST(TreeNode * tree){
 }
 
 void check_ST(TreeNode * tree){
-    checkMain();
+    //checkMain();
     traverse(tree, nullProc, checkTNode);
 }

@@ -302,7 +302,6 @@ void printTree( TreeNode * tree )
     else fprintf(listing,"Tipo desconhecido\n");
     for (i=0;i<MAXCHILDREN;i++) if (tree->child[i] != NULL) printTree(tree->child[i]);
     tree = tree->sibling;
-    fprintf(listing, ">Foi pro irmao");
   }
   UNINDENT;
 }
