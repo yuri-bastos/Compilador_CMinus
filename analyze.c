@@ -22,6 +22,13 @@ CallK ->Ver se a funcao existe!
 
 
 -> ASSIGN -> Olhar a expressao seguinte 
+
+Falta: Terminar de tratar declaracao de array
+- Terminar de tratar a atualizacao de numero de linha (chamadas de funcao e assigns ou usos de variaveis)
+
+- Ver se eh possivel contar os parametros inseridos
+
+- Terminar de tratar a chamada ou uso de variavel ou funcao n declaradas globalmente ou no escopo atual
  */
 
 //################################### INCLUDEs ##########################################
