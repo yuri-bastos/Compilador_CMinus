@@ -70,7 +70,7 @@ int main( int argc, char * argv[] )
 #else
 	build_ST(syntaxTree);
 	if (TraceAnalyze) {
-		fprintf(listing,"\n-------------------\nTABELA DE SIMBOLOS:\n------------------\n");
+		fprintf(listing,"\n-------------------\nTABELA DE SIMBOLOS:\n-------------------\n");
 		print_ST(listing);
 	}
 #endif
