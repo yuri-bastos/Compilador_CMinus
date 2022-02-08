@@ -16,10 +16,16 @@
 #define _SYMTAB_H_
 
 /* Lista encadeada que armazena o numero das linhas e a pos do prox item */
-typedef struct linkedList{
+
+typedef struct lineListK{
     int lineNum;
-    struct linkedList *next;
+    struct lineListK *next;
 } *lineList;
+
+typedef struct parListK{
+    DeclKind par;
+    struct parListK *next;
+} *funParsList;
 
 /* lista de baldes: contem listas dentro delas
  * Chaves:
@@ -42,6 +48,9 @@ typedef struct bList{
     //Obs.: usamos declKind pois o que conta em um simbolo eh como ele foi declarado, 
     //caso nao tenha declaracao previa, ja identifica um erro...
     
+    TreeNode * node;//No da arvore, usado para verificao de funcoes
+    funParsList funcPars;//Lista encadeada que armazena os parametros de uma funcao
+
     /* Ponteiro pro prox: */
     struct bList *next;
 } *bucketList;
@@ -76,7 +85,7 @@ int search_ST(char *name, ScopeName scope);
  * realizar procedimento de insercao atualizando a bucketList do indice 
  * na tabela hash com o id encontrado, caso seja valido...
  */
-void insert_ST(char * name,  int lineno, int loc, ScopeName scope, ExpType dType, DeclKind iType);
+void insert_ST(char * name,  int lineno, int loc, ScopeName scope, ExpType dType, DeclKind iType, TreeNode * declNode, funParsList params);
 
 /* Imprime a tabela de hash no formato da tabela de simbolos
  * propria e graficamente dita. usa o mesmo arquivo de saida
@@ -88,5 +97,9 @@ void insert_ST(char * name,  int lineno, int loc, ScopeName scope, ExpType dType
 void print_ST(FILE *listing);
 
 ExpType getDataType(char *name, ScopeName scope);
+
+DeclKind IDType(char *name, ScopeName scope);
+
+TreeNode * getFuncNode(char *funcName);
 
 #endif

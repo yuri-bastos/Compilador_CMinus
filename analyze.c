@@ -201,7 +201,8 @@ static void nullProc(TreeNode * tree){
 void insertTNode(TreeNode * tree)
 {
     if(Error == TRUE) return; //Parar insercao se já tiver dado erro
-    
+    TreeNode * treeAux;
+    funParsList declParams;
     switch (tree->nodekind)
     {
     case DeclK:
@@ -209,15 +210,22 @@ void insertTNode(TreeNode * tree)
         switch (tree->kind.decl)
         {
         case FunDeclK://Verificar se ja foi declarada 
+            //tree->child[1] = guarda os parametros
+            //cada irmao eh um parametro
+            
             if(search_ST(tree->attr.name, "\0") == 0)//Funcoes sao armazenadas no escopo "\0"
             {//nao foi declarada, inserir entao
-                insert_ST(tree->attr.name, tree->lineno, currMem++, "\0", tree->child[0]->type, FunDeclK);
+                insert_ST(tree->attr.name, tree->lineno, currMem++, "\0", tree->child[0]->type, FunDeclK, tree, declParams);
+                if(tree->child[1]->attr.name != NULL){//Se existe parametros
+                    treeAux = tree->child[1];
+                    fprintf(listing, "ArgFound");
+                }else{fprintf(listing, "NoArgs");}
             } else{
                 semanticErr(tree, tree->attr.name, currScope, "Redeclaracao de funcao");
             }
             break;
 
-        case VarDeclK://
+        case VarDeclK://Verificar: Declaracao como funcao ou variavel, verificar declaracao como void
             if(getTypes(tree) == Void) 
                 semanticErr(tree, tree->attr.name, currScope, "Declaracao invalida: Variavel nao pode ser do tipo void !");      
             else if(search_ST(tree->attr.name, currScope) != 0)
@@ -225,11 +233,10 @@ void insertTNode(TreeNode * tree)
             else if(search_ST(tree->attr.name, "\0") != 0)
                 semanticErr(tree, tree->attr.name, currScope, "Declaracao invalida, esta variavel ja foi declarada como ID de funcao");
             else
-                insert_ST(tree->attr.name, tree->lineno, currMem++, currScope, Integer, VarDeclK);
+                insert_ST(tree->attr.name, tree->lineno, currMem++, currScope, Integer, VarDeclK, tree, NULL);
             break;
         
-        case ArrayDeclK://
-            fprintf(listing, "%d", 0 == search_ST(tree->attr.arr.name, currScope));
+        case ArrayDeclK://Vetores
             if(getTypes(tree) == Void)
                 semanticErr(tree,tree->attr.arr.name, currScope, "Declaracao invalida: Array nao pode ser do tipo void !");
             else if(search_ST(tree->attr.arr.name, currScope) != 0)
@@ -237,7 +244,7 @@ void insertTNode(TreeNode * tree)
             else if(search_ST(tree->attr.arr.name, "\0") != 0)
                 semanticErr(tree, tree->attr.arr.name, currScope, "Declaracao invalida, este array ID ja foi declarado como ID de funcao");
             else 
-            
+                insert_ST(tree->attr.arr.name, tree->lineno, currMem++, currScope, ArrayInteger, ArrayDeclK, tree, NULL);
             break;
         
         default:
@@ -349,14 +356,29 @@ void checkTNode(TreeNode * tree)
  */
 void insertGlobals(int loc)
 {
-    insert_ST("input",-1,loc++,"\0",Integer,FunDeclK);
-    insert_ST("output",-1,loc,"\0",Void,FunDeclK);
+    TreeNode * input = newDeclNode(FunDeclK);
+    input->lineno = -1;
+    input->attr.name = "input";
+    input->sibling = newDeclNode(FunParDeclK);
+    input->sibling->type = Void;
+
+    TreeNode * output = newDeclNode(FunDeclK);
+    output->lineno = -1;
+    output->attr.name = "output";
+    output->sibling = newDeclNode(FunDeclK);
+    funParsList pars = (funParsList) malloc(sizeof(struct parListK));
+    pars->par = FunParDeclK;
+    pars->next = NULL;
+
+    insert_ST(input->attr.name,input->lineno,loc++,"\0",Integer,FunDeclK, input, NULL);
+    insert_ST(output->attr.name, output->lineno,loc,"\0",Void,FunDeclK, output, pars);
 }
 
 
 void build_ST(TreeNode * tree){
     insertGlobals(currMem+=2);
     traverse(tree, nullProc, insertTNode);
+    
 }
 
 void check_ST(TreeNode * tree){

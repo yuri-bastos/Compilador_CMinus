@@ -76,7 +76,8 @@ int search_ST(char *name, ScopeName scope){
  * realizar procedimento de insercao atualizando a bucketList do indice 
  * na tabela hash com o id encontrado, caso seja valido...
  */
-void insert_ST(char * name,  int linenum, int loc, ScopeName scope, ExpType dType, DeclKind iType){    char key[300] = "";
+void insert_ST(char * name,  int linenum, int loc, ScopeName scope, ExpType dType, DeclKind iType, TreeNode * declNode, funParsList params){    
+    char key[300] = "";
     strcat(key,name);//concatenando o nome na chave
     strcat(key,scope);//concatenando o escopo na chave
     int h = hash(key);//h = valor de hashing p pos na tabela
@@ -92,7 +93,7 @@ void insert_ST(char * name,  int linenum, int loc, ScopeName scope, ExpType dTyp
     if (l == NULL){ //Novo Simbolo -> Declarar (Contanto que seja uma declaracao)
         l = (bucketList) malloc(sizeof(struct bList));
         l->name = name;
-        l->lines = (lineList) malloc(sizeof(struct linkedList)); //alocando espaco pra lista
+        l->lines = (lineList) malloc(sizeof(struct lineListK)); //alocando espaco pra lista
         l->lines->lineNum = linenum; //atribuindo a linha de declaraca    o
         l->lines->next = NULL;
         l->memloc = loc;
@@ -101,17 +102,20 @@ void insert_ST(char * name,  int linenum, int loc, ScopeName scope, ExpType dTyp
         l->idType = iType;
         l->next = NULL;
         hashTable[h] = l;
+        l->node = declNode;
+        l->funcPars = params;
+
     } else{ //Atualizar numero de linhas de ocorrencia
         if (l->lines == NULL) //Usado para o caso especifico das funcoes input e output
         {    
-            l->lines = (lineList) malloc(sizeof(struct linkedList)); //alocando espaco pra lista
+            l->lines = (lineList) malloc(sizeof(struct lineListK)); //alocando espaco pra lista
             l->lines->lineNum = linenum;
             l->lines->next = NULL;
             return;
         }
         lineList line = l->lines;
         while (line->next != NULL) line = line->next;
-        line->next = (lineList) malloc(sizeof(struct linkedList));
+        line->next = (lineList) malloc(sizeof(struct lineListK));
         line->next->lineNum = linenum;
         line->next->next = NULL;
     }    
@@ -243,4 +247,23 @@ DeclKind getIDType(char *name, ScopeName scope)
     }
 
     return -1;//error
+}
+
+TreeNode * getFuncNode(char *funcName)
+{
+    char key[300] = "";
+    strcat(key,funcName);//concatenando o nome na chave
+    strcat(key,"\0");//concatenando o escopo na chave
+    
+    int h = hash(key);//h = valor de hashing p pos na tabela
+    //IMPORTANTE: No caso de chamada ou declaracao de funcao, scope vira como "\0"
+    //desse modo, seu hash é 0 e nao impacta no hash do nome da funcao
+    
+    bucketList l = hashTable[h]; //l = lista para o indice da tabela rel ao dado simbolo
+    while(l != NULL){
+        if ((strcmp(l->name, funcName) == 0) && (l->scope == "\0")) return l->node;
+        l = l->next;
+    }
+
+    return NULL;//error
 }
