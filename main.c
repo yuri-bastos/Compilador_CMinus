@@ -15,13 +15,14 @@
 #include "globals.h"
 
 #define NO_PARSE FALSE
-#define NO_ANALYZE TRUE
+#define NO_ANALYZE FALSE
 #define NO_CODE TRUE
 
 #include "util.h"
 #include "scan.h"
 #include "parse.h"
 #include "analyze.h"
+#include "symtab.h"
 
 /* Variáveis globais */
 int lineno = 0;
@@ -34,8 +35,8 @@ int EchoSource = TRUE;
 int TraceScan = FALSE;
 int TraceParse = TRUE;
 int TraceAnalyze = TRUE;
+int TraceAnalyze_DETAIL = TRUE;
 int TraceCode = FALSE;
-
 int Error = FALSE;
 
 int main( int argc, char * argv[] )
@@ -67,9 +68,10 @@ int main( int argc, char * argv[] )
 #if NO_ANALYZE
 	/*  */
 #else
+	build_ST(syntaxTree);
 	if (TraceAnalyze) {
 		fprintf(listing,"\n-------------------\nTABELA DE SIMBOLOS:\n------------------\n");
-		print_ST(listing)
+		print_ST(listing);
 	}
 #endif
 	fclose(source);

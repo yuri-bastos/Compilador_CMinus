@@ -71,8 +71,7 @@ typedef enum {Void,Integer,ArrayInteger} ExpType;
 
 #define MAXCHILDREN 3
 
-/* String do Escopo/Funcao*/
-typedef char* ScopeName;
+typedef char* ScopeName;//String que armazena nomes de funcoes (escopos)
 
 typedef struct ArrayAttribute { TokenType type; char * name; int size; } ArrAttr; //Atributos de um Vetor
 

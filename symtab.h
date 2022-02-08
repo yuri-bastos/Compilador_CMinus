@@ -17,7 +17,7 @@
 
 /* Lista encadeada que armazena o numero das linhas e a pos do prox item */
 typedef struct linkedList{
-    int lineno;
+    int lineNum;
     struct linkedList *next;
 } *lineList;
 
@@ -87,4 +87,11 @@ void insert_ST(char * name,  int lineno, int loc, ScopeName scope, ExpType dType
  */
 void print_ST(FILE *listing);
 
+
+/* 
+ * static void setupGlobals()
+ * 
+ * Inicializa as funcoes globais: int input() e void output(int)
+ */
+void setupGlobals(int loc);
 #endif

@@ -11,7 +11,6 @@
 /* 				Baseado no Compilador		    	*/
 /* 		  para TINY de Kenneth C. Louden 			*/
 /****************************************************/
-
 #include "globals.h"
 #include "symtab.h"
 
@@ -27,7 +26,7 @@ int hash(char* key){
     int i = 0;
     while (key[i] != '\0'){ 
         temp = ((temp << SHIFT) + key[i]) % SIZE;
-        ++i;
+        i++;
     }
     return temp;
 }
@@ -44,7 +43,10 @@ static bucketList hashTable[SIZE];
  *  scope = escopo desse simbolo
  */
 bucketList search_ST(char *name, ScopeName scope){
-    char *key = strcat(name,scope); //Concatenar o nome com o escopo para evitar colisoes...
+    char key[300] = "";
+    strcat(key,name);//concatenando o nome na chave
+    strcat(key,scope);//concatenando o escopo na chave
+    
     int h = hash(key);//h = valor de hashing p pos na tabela
     //IMPORTANTE: No caso de chamada ou declaracao de funcao, scope vira como "\0"
     //desse modo, seu hash é 0 e nao impacta no hash do nome da funcao
@@ -74,8 +76,9 @@ bucketList search_ST(char *name, ScopeName scope){
  * realizar procedimento de insercao atualizando a bucketList do indice 
  * na tabela hash com o id encontrado, caso seja valido...
  */
-void insert_ST(char * name,  int lineno, int loc, ScopeName scope, ExpType dType, DeclKind iType){
-    char *key = strcat(name,scope); //Concatenar o nome com o escopo para evitar colisoes...
+void insert_ST(char * name,  int linenum, int loc, ScopeName scope, ExpType dType, DeclKind iType){    char key[300] = "";
+    strcat(key,name);//concatenando o nome na chave
+    strcat(key,scope);//concatenando o escopo na chave
     int h = hash(key);//h = valor de hashing p pos na tabela
     //IMPORTANTE: No caso de chamada ou declaracao de funcao, scope vira como "\0"
     //desse modo, seu hash é 0 e nao impacta no hash do nome da funcao
@@ -83,9 +86,10 @@ void insert_ST(char * name,  int lineno, int loc, ScopeName scope, ExpType dType
     bucketList l = search_ST(name,scope); //l recebe o end desse nome e escopo na tabelaHash
 
     if (l == NULL){ //Novo Simbolo -> Declarar (Contanto que seja uma declaracao)
+        l = (bucketList) malloc(sizeof(struct bList));
         l->name = name;
         l->lines = (lineList) malloc(sizeof(struct linkedList)); //alocando espaco pra lista
-        l->lines->lineno = lineno; //atribuindo a linha de declaracao
+        l->lines->lineNum = linenum; //atribuindo a linha de declaraca    o
         l->lines->next = NULL;
         l->memloc = loc;
         l->scope = scope;
@@ -94,10 +98,13 @@ void insert_ST(char * name,  int lineno, int loc, ScopeName scope, ExpType dType
         l->next = NULL;
         hashTable[h] = l;
     } else{ //Atualizar numero de linhas de ocorrencia
+        if (l->lines == NULL) //Usado para o caso especifico das funcoes input e output
+            l->lines = (lineList) malloc(sizeof(struct linkedList)); //alocando espaco pra lista
+        
         lineList line = l->lines;
         while (line->next != NULL) line = line->next;
         line->next = (lineList) malloc(sizeof(struct linkedList));
-        line->next->lineno = lineno;
+        line->next->lineNum = linenum;
         line->next->next = NULL;
     }    
 }
@@ -112,7 +119,7 @@ void insert_ST(char * name,  int lineno, int loc, ScopeName scope, ExpType dType
 void print_ST(FILE *listing){
     int i;
     char *idtStr, *dtStr;
-
+    
     //cabecalho:
     fprintf(listing,"ENTRADA  NOME ID        ESCOPO    TIPO ID  TIPO DADO  MEMLOC  N.LINHAS\n");
     fprintf(listing,"-------  -------------  --------  -------  ---------  ------  --------\n");
@@ -125,65 +132,111 @@ void print_ST(FILE *listing){
             bucketList l = hashTable[i];
             while (l != NULL) //Percorrendo a lista da entrada atual da tabela
             {
-                fprintf(listing, "%-7d  ", i);//imprimindo a entrada na tabela hash
-                fprintf(listing, "%-13s  ", l->name);//imrpimindo o nome do ID
-                fprintf(listing, "%-8s  ", l->scope);//imprimindo o escopo
-                
-                //Encontrando qual o tipo do id para impressao
-                switch (l->idType)
+                if(l->lines == NULL)//Impedir que input e output aparecam caso nao tenham sido usadas
                 {
-                    case FunDeclK:
-                        idtStr = "fun";
-                        break;
+                    fprintf(listing, "%-7d  ", i);//imprimindo a entrada na tabela hash
+                    fprintf(listing, "%-13s  ", l->name);//imrpimindo o nome do ID
+                    fprintf(listing, "%-8s  ", l->scope);//imprimindo o escopo
                     
-                    case VarDeclK:
-                        idtStr = "var";
-                        break;
+                    //Encontrando qual o tipo do id para impressao
+                    switch (l->idType)
+                    {
+                        case FunDeclK:
+                            idtStr = "fun";
+                            break;
+                        
+                        case VarDeclK:
+                            idtStr = "var";
+                            break;
 
-                    case ArrayDeclK:
-                        idtStr = "arr";
-                        break;
+                        case ArrayDeclK:
+                            idtStr = "arr";
+                            break;
 
-                    default:
-                        idtStr = "\0";
-                        break;
-                }
-                fprintf(listing, "%-7s  ", idtStr);//Imprimindo o tipo do id
+                        default:
+                            idtStr = "\0";
+                            break;
+                    }
+                    fprintf(listing, "%-7s  ", idtStr);//Imprimindo o tipo do id
 
-                //Encontrando o tipo do dado para impressao
-                switch (l->dataType)
-                {
-                    case Integer:
-                        dtStr = "int";
-                        break;
+                    //Encontrando o tipo do dado para impressao
+                    switch (l->dataType)
+                    {
+                        case Integer:
+                            dtStr = "int";
+                            break;
 
-                    case Void:
-                        dtStr = "void";
-                        break;
+                        case Void:
+                            dtStr = "void";
+                            break;
+                        
+                        case ArrayInteger:
+                            dtStr = "int array";
+                            break;
+
+                        default:
+                            dtStr = "\0";
+                            break;
+                    }
+                    fprintf(listing, "%-9s  ", dtStr);//Imprimindo o tipo do dado
+
+                    fprintf(listing, "%-5d  ", l->memloc);//Imprimindo o local de memoria
                     
-                    case ArrayInteger:
-                        dtStr = "int array";
-                        break;
+                    //Impressao dos num das linhas:
+                    lineList line = l->lines;
+                    while (line != NULL)
+                    {
+                        fprintf(listing, "%2d", line->lineNum);
+                        line = line->next;
+                    }
 
-                    default:
-                        dtStr = "\0";
-                        break;
+                    fprintf(listing,"\n");//Pulando linda da tabela impressa para o prox simbolo
                 }
-                fprintf(listing, "%-9s  ", dtStr);//Imprimindo o tipo do dado
-
-                fprintf(listing, "%-5d  ", l->memloc);//Imprimindo o local de memoria
-                
-                //Impressao dos num das linhas:
-                lineList line = l->lines;
-                while (line != NULL)
-                {
-                    fprintf(listing, "%2d", line->lineno);
-                    line = line->next;
-                }
-
-                fprintf(listing,"\n");//Pulando linda da tabela impressa para o prox simbolo
                 l = l->next;//Indo para o prox simbolo dessa entrada (colisoes)
             }
         }
     }
+}
+
+/* 
+ * static void setupGlobals()
+ * 
+ * Inicializa as funcoes globais: int input() e void output(int)
+ */
+ void setupGlobals(int loc){
+    if (1)
+    {
+        //declarando imput
+        int h = hash("input");
+        bucketList l = search_ST("input", "\0");
+
+        l = (bucketList) malloc(sizeof(struct bList));
+        l->name = "input";
+        l->lines = NULL;
+        l->memloc = loc;
+        l->scope = "\0";
+        l->dataType = Integer;
+        l->idType = FunDeclK;
+        l->next = NULL;
+        hashTable[h] = l;
+        
+        loc++;
+        //Declarando output
+        h = hash("output");
+        l = search_ST("output", "\0");
+
+        l = (bucketList) malloc(sizeof(struct bList));
+        l->name = "output";
+        l->lines = NULL;
+        l->memloc = loc;
+        l->scope = "\0";
+        l->dataType = Void;
+        l->idType = FunDeclK;
+        l->next = NULL;
+        hashTable[h] = l;
+        
+        insert_ST("input", 2, 3, "\0", 0, 0);
+        
+    }
+    
 }
