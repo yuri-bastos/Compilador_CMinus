@@ -71,7 +71,6 @@ id : ID { savedName = copyString(tokenString); savedLineNo = lineno; }
 	   
 num : NUM { savedNumber = atoi(tokenString); savedLineNo = lineno; }
 	;
-	
 			   
 var-declaracao : tipo-especificador id SEMI { $$ = newDeclNode(VarDeclK); $$->child[0] = $1; $$->lineno = lineno; $$->attr.name = savedName; }
 			   | tipo-especificador id LBRT num RBRT SEMI { $$ = newDeclNode(ArrayDeclK); $$->child[0] = $1; $$->lineno = lineno; $$->type = ArrayInteger; $$->attr.arr.name = savedName; $$->attr.arr.size = savedNumber; }
@@ -85,7 +84,7 @@ fun-declaracao : tipo-especificador id { $$ = newDeclNode(FunDeclK); $$->lineno 
 			   ;
 	
 params : param-lista { $$ = $1; }
-	   | VOID { $$ = newDeclNode(FunParDeclK); $$->type = Void; }
+	   | VOID { $$ = newDeclNode(FunParDeclK); $$->type = Void; $$->attr.name = NULL; }
 	   ;
 	
 param-lista : param-lista COMMA param { YYSTYPE t = $1; if (t != NULL) { while (t->sibling != NULL) { t = t->sibling; } t->sibling = $3; $$ = $1; } else { $$ = $2; } }

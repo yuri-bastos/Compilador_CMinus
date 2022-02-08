@@ -291,7 +291,7 @@ void printTree( TreeNode * tree )
           if (tree->attr.name != NULL) {
             fprintf(listing, " %s\n", tree->attr.name);
           } else {
-            fprintf(listing, " void\n");
+            fprintf(listing, " \n");
           }
           break;
         default:
