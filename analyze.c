@@ -62,8 +62,8 @@ static int declExist = FALSE;//contabiliza se ja houve pelo menos uma declaracao
  */
 static void semanticErr(TreeNode * tree, char *id,  ScopeName scope, char *msg)
 {
-    if(!TraceAnalyze_DETAIL) fprintf(listing, "ERRO SEMANTICO: %s LINHA: %d", id, tree->lineno);
-    else fprintf(listing, "ERRO SEMANTICO: %s LINHA: %d em %s -> \"%s\"", id, tree->lineno, scope, msg);
+    if(!TraceAnalyze_DETAIL) fprintf(listing, "ERRO SEMANTICO: %s LINHA: %d\n", id, tree->lineno);
+    else fprintf(listing, "ERRO SEMANTICO: %s LINHA: %d em %s -> \"%s\"\n", id, tree->lineno, scope, msg);
     Error = TRUE;
 }
 
@@ -119,10 +119,9 @@ static void checkMain()
 {
     if (Error != TRUE)
     {
-        ScopeName mainFunc = "main";
-        if (search_ST(mainFunc, "\0") == NULL)
+        if (search_ST("main", "\0") == 0)
         {
-            if(TraceAnalyze) fprintf(listing, "ERRO SEMANTICO: funcao main() nao declarada!");
+            if(TraceAnalyze) fprintf(listing, "ERRO SEMANTICO: funcao main() nao declarada!\n");
             Error = TRUE;
         }
     }
@@ -208,7 +207,7 @@ void insertTNode(TreeNode * tree)
         switch (tree->kind.decl)
         {
         case FunDeclK://Verificar se ja foi declarada      
-            if(search_ST(tree->attr.name, "\0") == NULL)//Funcoes sao armazenadas no escopo "\0"
+            if(search_ST(tree->attr.name, "\0") == 0)//Funcoes sao armazenadas no escopo "\0"
             {//nao foi declarada, inserir entao
 
             }
@@ -245,8 +244,8 @@ void insertTNode(TreeNode * tree)
  */  
 void checkTNode(TreeNode * tree)
 {
-    if(Error = TRUE) return; //Ignorar checagens se já tiver dado erro
-
+    if(Error == TRUE) return; //Ignorar checagens se já tiver dado erro
+    
     switch (tree->nodekind)
     {
     case StmtK:
@@ -254,24 +253,26 @@ void checkTNode(TreeNode * tree)
         {
         case AssignK://Conferir retorno            
             if(tree->child[1] == NULL) break; //SO PRA GARANTIR
-            if (tree->child[1]->nodekind == CallK)
+
+            if (tree->child[1]->kind.exp == CallK)
             {//Se for do tipo chamada de funcao, verificar o retorno das mesmas 
-                if(search_ST(tree->child[1]->attr.name, "\0")->dataType == Void)
+                if(getDataType(tree->child[1]->attr.name, "\0") == Void)
                     semanticErr(tree, tree->attr.name, currScope, "Funcao de retorno void nao pode ser atribuida a variavel do tipo int");
             } 
             break;
 
-        case WhileK://Conferir expressao do While (deve ser inteiro?)           
-            if(tree->child[1] == NULL) break; //SO PRA GARANTIR
-            if (tree->child[1]->nodekind == CallK)
+        case WhileK://Conferir expressao do While (OK)       
+            if(tree->child[0] == NULL) break; //SO PRA GARANTIR
+           
+            if (tree->child[0]->kind.exp == CallK)
             {//Se for do tipo chamada de funcao, verificar o retorno das mesmas 
-                if(search_ST(tree->child[1]->attr.name, "\0")->dataType == Void)
-                    semanticErr(tree, tree->attr.name, currScope, "Funcao de retorno void nao pode ser expressao de while");
+                if(getDataType(tree->child[0]->attr.name,"\0") == Void)
+                    semanticErr(tree, "while", currScope, "Funcao de retorno void nao pode ser expressao de while");
             } 
             break;
         
-        case ReturnK://Conferir retorno
-            if (search_ST(currScope,"\0")->dataType == Void && tree->child[0] != NULL)
+        case ReturnK://Conferir retorno (OK)
+            if (getDataType(currScope, "\0") == Void)
             {//Se nn é NULL, entao retorna int
                 semanticErr(tree, "return", currScope, "Retorno de valor em funcao de tipo void");
             }
@@ -289,21 +290,22 @@ void checkTNode(TreeNode * tree)
             if(tree->child[0] == NULL) break; //SO PRA GARANTIR
             if (tree->child[0]->nodekind == CallK)
             {//Se for do tipo chamada de funcao, verificar o retorno das mesmas 
-                if(search_ST(tree->child[0]->attr.name, "\0")->dataType == Void)
+                if(getDataType(tree->child[0]->attr.name, "\0") == Void)
                     semanticErr(tree, tree->attr.name, currScope, "Funcao de retorno void nao pode ser expressao de vetor");
             } 
             break;
 
         case CalcK://Conferir operandos
-            if(tree->child[0] == NULL && tree->child[1] == NULL) break; //SO PRA GARANTIR
-            if (tree->child[0]->nodekind == CallK)
+            if(tree->child[0] == NULL && tree->child[2] == NULL) break; //SO PRA GARANTIR
+            if (tree->child[0]->kind.exp == CallK)
             {//Se for do tipo chamada de funcao, verificar o retorno das mesmas 
-                if(search_ST(tree->child[0]->attr.name, "\0")->dataType == Void)
-                    semanticErr(tree, tree->attr.name, currScope, "Funcao de retorno void nao pode ser operando");
-            } else if (tree->child[1]->nodekind == CallK)
+                if(getDataType(tree->child[0]->attr.name, "\0") == Void)
+                    semanticErr(tree, tree->child[0]->attr.name, currScope, "Funcao de retorno void nao pode ser operando");
+            } 
+            if (tree->child[2]->kind.exp == CallK)
             {
-                if(search_ST(tree->child[1]->attr.name, "\0")->dataType == Void)
-                    semanticErr(tree, tree->attr.name, currScope, "Funcao de retorno void nao pode ser operando");
+                if(getDataType(tree->child[2]->attr.name, "\0") == Void)
+                    semanticErr(tree, tree->child[2]->attr.name, currScope, "Funcao de retorno void nao pode ser operando");
             }
             break;
         
@@ -320,14 +322,27 @@ void checkTNode(TreeNode * tree)
 
 //############################ Chamadas da Analise Semantica #####################################
 
+/* 
+ * static void setupGlobals()
+ * 
+ * Inicializa as funcoes globais: int input() e void output(int)
+ */
+void insertGlobals(int loc)
+{
+    insert_ST("input",-1,loc++,"\0",Integer,FunDeclK);
+    insert_ST("output",-1,loc,"\0",Integer,FunDeclK);
+}
+
 
 void build_ST(TreeNode * tree){
-    setupGlobals(currMem);
-    currMem += 2;//decl do input e output
-    //traverse(tree, insertTNode, nullProc);
-}
-
-
-void typeCheck_ST(TreeNode * tree){
+    insertGlobals(currMem+=2);
+    insert_ST("main",-1,currMem++,"\0",Void,FunDeclK);
+    checkMain();
     traverse(tree, nullProc, checkTNode);
+    
 }
+
+
+/* void typeCheck_ST(TreeNode * tree){
+    traverse(tree, nullProc, checkTNode);
+} */

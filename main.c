@@ -55,24 +55,34 @@ int main( int argc, char * argv[] )
 		exit(1);
 	}
 	listing = stdout; /* carrega o arquivo para saída */
-	fprintf(listing,"\n		Compilando em C-: %s\n\nAnálise Léxica/Sintática:\n\n",pgm);
+	fprintf(listing,"\n		Compilando em C-: %s\n\n>Analise Lexica/Sintatica:\n\n",pgm);
 #if NO_PARSE
 	while (getToken()!=ENDFILE);
 #else
 	syntaxTree = parse();
 	if (TraceParse) {
-		fprintf(listing,"\n-------------------\nÁRVORE SINTÁTICA:\n-------------------\n");
-		printTree(syntaxTree);
+		if(Error == FALSE){
+			fprintf(listing,"\n----------------------------------------------------------------------\n%42s\n----------------------------------------------------------------------\n", "ARVORE SINTATICA");
+			printTree(syntaxTree);
+			fprintf(listing,"\n----------------------------------------------------------------------\n");
+		}
 	}
 #endif
 #if NO_ANALYZE
 	/*  */
 #else
-	build_ST(syntaxTree);
-	if (TraceAnalyze) {
-		fprintf(listing,"\n-------------------\nTABELA DE SIMBOLOS:\n-------------------\n");
-		print_ST(listing);
+	if(Error == FALSE){
+		fprintf(listing,"\n\n>Analise Semantica:\n\n");
+		build_ST(syntaxTree);
+		if (TraceAnalyze) {
+			if(Error == FALSE)
+			{
+				fprintf(listing,"\n----------------------------------------------------------------------\n%44s\n----------------------------------------------------------------------\n", "TABELA DE SIMBOLOS");
+				print_ST(listing);
+			}
+		}
 	}
+	
 #endif
 	fclose(source);
 	return 0;

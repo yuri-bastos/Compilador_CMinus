@@ -32,17 +32,17 @@ int hash(char* key){
 }
 
 /* Tabela de Hash que estrutura a tabela de simbolos */
-static bucketList hashTable[SIZE];
+bucketList hashTable[SIZE];
 
-/* Busca o end da lista de baldes de um Simbolo: 
- * caso encontre: retorna a lista
- * caso nao encontre: retorna NULL
+/* Busca a existencia ou nao de um simbolo: 
+ * caso encontre: retorna 1
+ * caso nao encontre: retorna 0
  * 
  * Args:
  *  name = nome do simbolo
  *  scope = escopo desse simbolo
  */
-bucketList search_ST(char *name, ScopeName scope){
+int search_ST(char *name, ScopeName scope){
     char key[300] = "";
     strcat(key,name);//concatenando o nome na chave
     strcat(key,scope);//concatenando o escopo na chave
@@ -52,11 +52,11 @@ bucketList search_ST(char *name, ScopeName scope){
     //desse modo, seu hash é 0 e nao impacta no hash do nome da funcao
     bucketList l = hashTable[h]; //l = lista para o indice da tabela rel ao dado simbolo
     while(l != NULL){
-        if ((strcmp(l->name, name) == 0) && (l->scope == scope)) break;
+        if ((strcmp(l->name, name) == 0) && (l->scope == scope)) return 1;
         l = l->next;
     }
     
-    return l;
+    return 0;
 }
 
 /* Insere na tabela de simbolos (tabela hash) um simbolo, colocando
@@ -83,7 +83,11 @@ void insert_ST(char * name,  int linenum, int loc, ScopeName scope, ExpType dTyp
     //IMPORTANTE: No caso de chamada ou declaracao de funcao, scope vira como "\0"
     //desse modo, seu hash é 0 e nao impacta no hash do nome da funcao
 
-    bucketList l = search_ST(name,scope); //l recebe o end desse nome e escopo na tabelaHash
+    bucketList l = hashTable[h]; //l = lista para o indice da tabela rel ao dado simbolo
+    while(l != NULL){
+        if ((strcmp(l->name, name) == 0) && (l->scope == scope)) break;
+        l = l->next;
+    }
 
     if (l == NULL){ //Novo Simbolo -> Declarar (Contanto que seja uma declaracao)
         l = (bucketList) malloc(sizeof(struct bList));
@@ -99,8 +103,12 @@ void insert_ST(char * name,  int linenum, int loc, ScopeName scope, ExpType dTyp
         hashTable[h] = l;
     } else{ //Atualizar numero de linhas de ocorrencia
         if (l->lines == NULL) //Usado para o caso especifico das funcoes input e output
+        {    
             l->lines = (lineList) malloc(sizeof(struct linkedList)); //alocando espaco pra lista
-        
+            l->lines->lineNum = linenum;
+            l->lines->next = NULL;
+            return;
+        }
         lineList line = l->lines;
         while (line->next != NULL) line = line->next;
         line->next = (lineList) malloc(sizeof(struct linkedList));
@@ -131,8 +139,8 @@ void print_ST(FILE *listing){
         {
             bucketList l = hashTable[i];
             while (l != NULL) //Percorrendo a lista da entrada atual da tabela
-            {
-                if(l->lines == NULL)//Impedir que input e output aparecam caso nao tenham sido usadas
+            {   
+                if(( strcmp(l->name, "input") != 0 || l->lines->next != NULL) && ( strcmp(l->name, "output") != 0 || l->lines->next != NULL))//Impedir que input e output aparecam caso nao tenham sido usadas
                 {
                     fprintf(listing, "%-7d  ", i);//imprimindo a entrada na tabela hash
                     fprintf(listing, "%-13s  ", l->name);//imrpimindo o nome do ID
@@ -186,7 +194,10 @@ void print_ST(FILE *listing){
                     lineList line = l->lines;
                     while (line != NULL)
                     {
-                        fprintf(listing, "%2d", line->lineNum);
+                        if (line->lineNum != -1)
+                        {
+                            fprintf(listing, "%2d", line->lineNum);
+                        }                        
                         line = line->next;
                     }
 
@@ -198,45 +209,20 @@ void print_ST(FILE *listing){
     }
 }
 
-/* 
- * static void setupGlobals()
- * 
- * Inicializa as funcoes globais: int input() e void output(int)
- */
- void setupGlobals(int loc){
-    if (1)
-    {
-        //declarando imput
-        int h = hash("input");
-        bucketList l = search_ST("input", "\0");
-
-        l = (bucketList) malloc(sizeof(struct bList));
-        l->name = "input";
-        l->lines = NULL;
-        l->memloc = loc;
-        l->scope = "\0";
-        l->dataType = Integer;
-        l->idType = FunDeclK;
-        l->next = NULL;
-        hashTable[h] = l;
-        
-        loc++;
-        //Declarando output
-        h = hash("output");
-        l = search_ST("output", "\0");
-
-        l = (bucketList) malloc(sizeof(struct bList));
-        l->name = "output";
-        l->lines = NULL;
-        l->memloc = loc;
-        l->scope = "\0";
-        l->dataType = Void;
-        l->idType = FunDeclK;
-        l->next = NULL;
-        hashTable[h] = l;
-        
-        insert_ST("input", 2, 3, "\0", 0, 0);
-        
-    }
+ExpType getDataType(char *name, ScopeName scope)
+{
+    char key[300] = "";
+    strcat(key,name);//concatenando o nome na chave
+    strcat(key,scope);//concatenando o escopo na chave
     
+    int h = hash(key);//h = valor de hashing p pos na tabela
+    //IMPORTANTE: No caso de chamada ou declaracao de funcao, scope vira como "\0"
+    //desse modo, seu hash é 0 e nao impacta no hash do nome da funcao
+    bucketList l = hashTable[h]; //l = lista para o indice da tabela rel ao dado simbolo
+    while(l != NULL){
+        if ((strcmp(l->name, name) == 0) && (l->scope == scope)) return l->dataType;
+        l = l->next;
+    }
+
+    return -1;//error
 }

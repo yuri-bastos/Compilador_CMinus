@@ -17,6 +17,9 @@
 /* Procedimento printToken imprime um token e seu lexema */
 void printToken(TokenType , const char* );
 
+/* Procedimento printToken mas sem pular linha*/
+void printTokenNoJumpLine( TokenType token, const char* tokenString );
+
 void printTypes(TreeNode* tree);
 /* Função newStmtNode cria um novo nó do tipo Statement */
 TreeNode * newStmtNode(StmtKind);
@@ -33,5 +36,7 @@ char * copyString( char * );
 /* Procedimento printTree imprime a árvore sintática utilizando identação para designar subárvores */
 void printTree( TreeNode * );
 
+/* getType retorna tipos de função e de variáveis */
+ExpType getTypes(TreeNode* tree);
 
 #endif

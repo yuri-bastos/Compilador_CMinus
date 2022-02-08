@@ -1817,8 +1817,8 @@ yyreturnlab:
 	
 	int yyerror(char * message) 
 	{
-	  fprintf(listing,"ERRO SINTÁTICO: ");
-	  printToken(yychar,tokenString);
+	  fprintf(listing,"\nERRO SINTATICO: ");
+	  printTokenNoJumpLine(yychar,tokenString);
 	  fprintf(listing," LINHA: %d\n",lineno);
 	  Error = TRUE;
 	  return 0;

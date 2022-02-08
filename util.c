@@ -51,6 +51,43 @@
    }
  }
 
+/* Procedimento printToken mas sem pular linha*/
+ void printTokenNoJumpLine( TokenType token, const char* tokenString )
+ { switch (token)
+   { case ELSE: fprintf(listing, "ELSE"); break;
+     case IF: fprintf(listing, "IF"); break;
+     case INT: fprintf(listing, "INT"); break;
+     case RETURN: fprintf(listing, "RETURN"); break;
+     case VOID: fprintf(listing, "VOID"); break;
+     case WHILE: fprintf(listing, "WHILE"); break;
+     case PLUS:     fprintf(listing, "+");  break;
+     case MINUS:    fprintf(listing, "-");  break;
+     case MULT:    fprintf(listing, "*");  break;
+     case DIVI:     fprintf(listing, "/");  break;
+     case LT:       fprintf(listing, "<");  break;
+     case LET:       fprintf(listing, "<="); break;
+     case GT:       fprintf(listing, ">");  break;
+     case GET:       fprintf(listing, ">="); break;
+     case EQUAL:       fprintf(listing, "=="); break;
+     case DIFF:       fprintf(listing, "!="); break;
+     case ASSIGN:   fprintf(listing, "=");  break;
+     case SEMI:     fprintf(listing, ";");  break;
+     case COMMA:    fprintf(listing, ",");  break;
+     case LPAR:   fprintf(listing, "(");  break;
+     case RPAR:   fprintf(listing, ")");  break;
+     case LBRT: fprintf(listing, "[");  break;
+     case RBRT: fprintf(listing, "]");  break;
+     case LBRC:   fprintf(listing, "{");  break;
+     case RBRC:   fprintf(listing, "}");  break;
+     case ENDFILE:  fprintf(listing,"%s %s",  "ENDFILE", "EOF"); break;
+     case NUM: fprintf(listing, "NUM, val = %s",tokenString); break;
+     case ID: fprintf(listing, "ID, name = %s",tokenString); break;
+     case ERROR: fprintf(listing, "%s",tokenString); break;
+     default: 
+       fprintf(listing,"Token Desconhecido: %d",token);
+   }
+ }
+
 /* Função newStmtNode cria um novo nó do tipo Statement */
 TreeNode * newStmtNode(StmtKind kind) {
   TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
@@ -155,6 +192,14 @@ void printTypes(TreeNode* tree) {
       default: return;
     }
   }
+}
+
+/* getType retorna tipos de função e de variáveis */
+ExpType getTypes(TreeNode* tree) {
+  if (tree->child[0] != NULL) {
+    return tree->child[0]->type;
+  }
+  return tree->type;
 }
 
 /* Procedimento printTree imprime a árvore sintática utilizando identação para designar subárvores */

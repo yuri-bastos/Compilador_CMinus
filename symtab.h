@@ -57,7 +57,7 @@ int hash(char* key);
  *  name = nome do simbolo
  *  scope = escopo desse simbolo
  */
-bucketList search_ST(char *name, ScopeName scope);
+int search_ST(char *name, ScopeName scope);
 
 /* Insere na tabela de simbolos (tabela hash) um simbolo, colocando
  * seu escopo, local de memoria e atualizando os numeros de linha.
@@ -87,11 +87,6 @@ void insert_ST(char * name,  int lineno, int loc, ScopeName scope, ExpType dType
  */
 void print_ST(FILE *listing);
 
+ExpType getDataType(char *name, ScopeName scope);
 
-/* 
- * static void setupGlobals()
- * 
- * Inicializa as funcoes globais: int input() e void output(int)
- */
-void setupGlobals(int loc);
 #endif

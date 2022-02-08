@@ -133,7 +133,14 @@ void insertTNode(TreeNode * tree);
  * 
  * IMPORTANTE: So funciona se ja tiver sido conferido se a dada funcao EXISTE
  */  
-void checkTNode(TreeNode * tree);
+//void checkTNode(TreeNode * tree);
+
+/* 
+ * static void setupGlobals()
+ * 
+ * Inicializa as funcoes globais: int input() e void output(int)
+ */
+void insertGlobals(int loc);
 
 void build_ST(TreeNode * tree);
 
