@@ -202,7 +202,7 @@ void insertTNode(TreeNode * tree)
 {
     if(Error == TRUE) return; //Parar insercao se já tiver dado erro
     TreeNode * treeAux;
-    funParsList declParams;
+    funParsList declParams = NULL;
     switch (tree->nodekind)
     {
     case DeclK:
@@ -218,7 +218,19 @@ void insertTNode(TreeNode * tree)
                 
                 if(tree->child[1]->attr.name != NULL){//Se existe parametros
                     treeAux = tree->child[1];//percorrer os parametros (tem que garantir que eles n sao tipo void...)
-                    check_ST(tree->child[1]);
+                    declParams = (funParsList) malloc(sizeof(struct parListK));
+                    while (treeAux != NULL)
+                    {
+                        if(treeAux->child[0]->type == Void){
+                            semanticErr(treeAux, treeAux->attr.name, currScope, "Declaracao de Parametro Invalida: Parametro de Variavel ou Parametro Array nao podem ser tipo void!");
+                            return;
+                        } else {
+                            fprintf(listing, "IHAA");
+                            
+                        }
+                        treeAux = treeAux->sibling;
+                    }
+                    
                 }else{
                     declParams = NULL;
                 }
