@@ -242,6 +242,39 @@ DeclKind getIDType(char *name, ScopeName scope)
     return -1;//error
 }
 
+DeclKind getIDTypeGlobal(char *name, ScopeName scope)
+{
+    char key[300] = "";
+    char glb[300] = "";
+    strcat(key,name);//concatenando o nome na chave
+    strcat(key,scope);//concatenando o escopo na chave
+    
+    int h = hash(key);//h = valor de hashing p pos na tabela
+    //IMPORTANTE: No caso de chamada ou declaracao de funcao, scope vira como "\0"
+    //desse modo, seu hash é 0 e nao impacta no hash do nome da funcao
+    bucketList l = hashTable[h]; //l = lista para o indice da tabela rel ao dado simbolo
+    while(l != NULL){
+        if ((strcmp(l->name, name) == 0) && (l->scope == scope)) return l->idType;
+        l = l->next;
+    }
+    if (l == NULL)
+    {
+        strcat(glb,name);//concatenando o nome na chave
+        strcat(glb,scope);//concatenando o escopo na chave
+        
+        int h = hash(glb);//h = valor de hashing p pos na tabela
+        //IMPORTANTE: No caso de chamada ou declaracao de funcao, scope vira como "\0"
+        //desse modo, seu hash é 0 e nao impacta no hash do nome da funcao
+        bucketList l = hashTable[h]; //l = lista para o indice da tabela rel ao dado simbolo
+        while(l != NULL){
+            if ((strcmp(l->name, name) == 0) && (l->scope == scope)) return l->idType;
+            l = l->next;
+        }
+    }
+    
+    return -1;//error
+}
+
 TreeNode * getFuncNode(char *funcName)
 {
     char key[300] = "";
@@ -315,3 +348,4 @@ int compParamLists(char *funcName, funParsList callParams)
     }
     return 0;//passou
 }
+

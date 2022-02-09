@@ -7,9 +7,7 @@ segundo o algoritmo de Euclides. */ int gcd (int u, int v)
 
 void main(void)
 
-{ int v[2]; int x; int y; x = input (); y = input ();
+{ int x; int y; x = input (); y = input ();
 output (gcd (x, y));
-x = y * gcd();
-x = 1;
-x = v[0-999] + 2;
+
 }

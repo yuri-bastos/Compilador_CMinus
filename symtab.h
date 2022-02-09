@@ -58,9 +58,9 @@ typedef struct bList{
 /* Funcao de hash que retorna o indice que corresponde a dada chave key */
 int hash(char* key);
 
-/* Busca o end da lista de baldes de um Simbolo: 
- * caso encontre: retorna a lista
- * caso nao encontre: retorna NULL
+/* Busca a existencia ou nao de um simbolo: 
+ * caso encontre: retorna 1
+ * caso nao encontre: retorna 0
  * 
  * Args:
  *  name = nome do simbolo
@@ -100,6 +100,8 @@ ExpType getDataType(char *name, ScopeName scope);
 
 DeclKind getIDType(char *name, ScopeName scope);
 
+DeclKind getIDTypeGlobal(char *name, ScopeName scope);
+
 TreeNode * getFuncNode(char *funcName);
 
 funParsList getFuncParams_ST(char *funcName);
@@ -110,5 +112,7 @@ funParsList getFuncParams_ST(char *funcName);
  * 2 -> Tipos dos parametros incompativeis
  */
 int compParamLists(char *funcName, funParsList callParams);
+
+
 
 #endif

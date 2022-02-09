@@ -223,7 +223,7 @@ void insertTNode(TreeNode * tree)
                     while (treeAux != NULL)
                     {
                         if(treeAux->child[0]->type == Void){//declaracao de paramentro do tipo void!
-                            semanticErr(treeAux, treeAux->attr.name, currScope, "FUN DECL Declaracao de Parametro Invalida: Parametro de Variavel ou Parametro Array nao podem ser tipo void!");
+                            semanticErr(treeAux, treeAux->attr.name, currScope, "Declaracao de Parametro Invalida: Parametro de Variavel ou Parametro Array nao podem ser tipo void!");
                             return;
                         } else {//ok, inserir na lista
                             currParams->par = treeAux->kind.decl;
@@ -315,9 +315,6 @@ void insertTNode(TreeNode * tree)
                 insert_ST(tree->attr.name, tree->lineno, currMem++, currScope, 0, 0, NULL, NULL);
             break;
         
-        case CallK:
-            fprintf(listing, "FUNCAO: %s em %d\n",tree->attr.name, tree->lineno);
-            break;
         default:
             break;
         }
@@ -405,6 +402,17 @@ void checkTNode(TreeNode * tree)
             } 
             break;
         
+        case CallK:
+            if(search_ST(tree->attr.name, "\0") == 0){
+                semanticErr(tree, tree->attr.name, currScope, "Chamada de funcao nao declarada");
+                return;
+            } else
+            {
+                insert_ST(tree->attr.name, tree->lineno, 0, "\0", 0, 0, tree, NULL);
+            }
+            
+        break;
+
         default:
             break;
         }
