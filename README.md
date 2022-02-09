@@ -1,9 +1,8 @@
 # Compilador_CMinus
-//////////////// ETAPA 3 ////////////////////////
-/////////// Árvore Sintática ////////////////////
-/////////////////////////////////////////////////
 
-##ARQUIVOS:
+### ETAPA 5: ANALISE SEMANTICA
+
+## ARQUIVOS:
 
 
 	analyze.c   ---->   Arquivo com funções para analise semantica da arvore sintatica
@@ -26,7 +25,7 @@
 	
 
 
-##COMANDOS:
+## COMANDOS:
 
 
 	(navegue até a pasta de cminus.l)
@@ -36,4 +35,6 @@
 	gcc *.c -o Compile
 	Compile.exe mdc.cm (ou outro arquivo de teste)
 
-
+## OBS:
+  
+	Nao foi possivel finalizar a Etapa 6 de Geracao do Codigo Intermediario
