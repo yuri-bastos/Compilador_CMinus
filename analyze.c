@@ -12,25 +12,6 @@
 /* 		  para TINY de Kenneth C. Louden 			*/
 /****************************************************/
 
-/* IMPORTANTE:
-FALTA VER COMO MANTER CONTAGEM DA QUANTIDADE DE PARAMETROS QUE UMA FUNCAO ACEITA
-
-CallK ->Ver se a funcao existe!
-
--> FunDeclK -> Olhar tree->child[0] que tem o tipo de dado dela!! (Observar se ela ja existe e jogar erro de redefinicao de funcao)
-->DeclK -> tree->child[0]->type armazena o tipo 
-
-
--> ASSIGN -> Olhar a expressao seguinte 
-
-Falta: Terminar de tratar declaracao de array
-- Terminar de tratar a atualizacao de numero de linha (chamadas de funcao e assigns ou usos de variaveis)
-
-- Ver se eh possivel contar os parametros inseridos
-
-- Terminar de tratar a chamada ou uso de variavel ou funcao n declaradas globalmente ou no escopo atual
- */
-
 //################################### INCLUDEs ##########################################
 #include "globals.h"
 #include "symtab.h"
@@ -147,6 +128,7 @@ static void checkMain()
 static void traverse( TreeNode * tree, void (* preProc) (TreeNode *), void (* postProc) (TreeNode *) )
 { if (tree != NULL)
   { 
+    
     preCheckScopeStart(tree);
     preProc(tree);
     { int i;
@@ -280,14 +262,14 @@ void insertTNode(TreeNode * tree)
             else if(search_ST(tree->attr.name, "\0") != 0)
                 semanticErr(tree, tree->attr.name, currScope, "Declaracao invalida, este array ID ja foi declarado como ID de funcao");
             else 
-                insert_ST(tree->attr.name, tree->lineno, currMem++, currScope, ArrayInteger, ArrayDeclK, tree, NULL);
+                insert_ST(tree->attr.name, tree->lineno, currMem++, currScope, Integer, ArrayParDeclK, tree, NULL);
             break;
 
         case FunParDeclK://Verificar: Declaracao como funcao ou variavel, verificar declaracao como void
             if (tree->child[0] == NULL) break;
             
             if(tree->child[0]->attr.name != NULL && tree->child[0]->type == Void)
-                semanticErr(tree, tree->attr.name, currScope, "FUNPARDECLDeclaracao invalida: Variavel nao pode ser do tipo void !");      
+                semanticErr(tree, tree->attr.name, currScope, "Declaracao invalida: Variavel nao pode ser do tipo void !");      
             else if(search_ST(tree->attr.name, currScope) != 0)
                 semanticErr(tree, tree->attr.name, currScope, "Redeclaracao de variavel");
             else if(search_ST(tree->attr.name, "\0") != 0)
@@ -310,8 +292,9 @@ void insertTNode(TreeNode * tree)
             if(search_ST(tree->attr.name, currScope) == 0 && search_ST(tree->attr.name, "global") == 0)
                 semanticErr(tree, tree->attr.name, currScope, "Uso de ID nao declarado!!");
             else if(tree->child[0] == NULL && getIDType(tree->attr.name, currScope) == ArrayDeclK)
+                {fprintf(listing, "%d", getIDType(tree->attr.name, currScope));
                 semanticErr(tree, tree->attr.name, currScope, "Chamada de ID do tipo Array SEM especificacao de index (Esperado: ID[expressao])");
-            else
+            }else
                 insert_ST(tree->attr.name, tree->lineno, currMem++, currScope, 0, 0, NULL, NULL);
             break;
         
@@ -406,10 +389,8 @@ void checkTNode(TreeNode * tree)
             if(search_ST(tree->attr.name, "\0") == 0){
                 semanticErr(tree, tree->attr.name, currScope, "Chamada de funcao nao declarada");
                 return;
-            } else
-            {
-                insert_ST(tree->attr.name, tree->lineno, 0, "\0", 0, 0, tree, NULL);
-            }
+            } 
+            insert_ST(tree->attr.name, tree->lineno, 0, "\0", 0, 0, tree, NULL);
             
         break;
 
@@ -426,39 +407,13 @@ void checkTNode(TreeNode * tree)
 
 //############################ Chamadas da Analise Semantica #####################################
 
-/* 
- * static void setupGlobals()
- * 
- * Inicializa as funcoes globais: int input() e void output(int)
- */
-void insertGlobals(int loc)
-{
-    TreeNode * input = newDeclNode(FunDeclK);
-    input->lineno = -1;
-    input->attr.name = "input";
-    input->sibling = newDeclNode(FunParDeclK);
-    input->sibling->type = Void;
-
-    TreeNode * output = newDeclNode(FunDeclK);
-    output->lineno = -1;
-    output->attr.name = "output";
-    output->sibling = newDeclNode(FunDeclK);
-    funParsList pars = (funParsList) malloc(sizeof(struct parListK));
-    pars->par = FunParDeclK;
-    pars->next = NULL;
-
-    insert_ST(input->attr.name,input->lineno,loc++,"\0",Integer,FunDeclK, input, NULL);
-    insert_ST(output->attr.name, output->lineno,loc,"\0",Void,FunDeclK, output, pars);
-}
-
-
 void build_ST(TreeNode * tree){
-    insertGlobals(currMem+=2);
+    insert_ST("input", -1,currMem++,"\0",Integer,FunDeclK, NULL, NULL);
+    insert_ST("output", -1,currMem++,"\0",Void,FunDeclK, NULL, NULL);
     traverse(tree, nullProc, insertTNode);
-    
 }
 
 void check_ST(TreeNode * tree){
-    //checkMain();
+    checkMain();
     traverse(tree, nullProc, checkTNode);
 }

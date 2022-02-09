@@ -15,6 +15,8 @@
 #ifndef _ANALYZE_H_
 #define _ANALYZE_H_
 
+//############################# Saida de Erros Semanticos ###############################
+
 /*
  * static void semanticErr(TreeNode * tree, char *id,  ScopeName *scope, char *msg)
  * ARGS:
@@ -28,6 +30,8 @@
  * havera ou nao um tracing mais detalhado
  */
 static void semanticErr(TreeNode * tree, char *id,  ScopeName scope, char *msg);
+
+//############################## Proc. de Checagem do Escopo ##############################
 
 /*
  * static void preCheckScopeStart(TreeNode *tree)
@@ -67,6 +71,9 @@ static void postCheckScopeEnd(TreeNode *tree);
  */
 static void checkMain();
 
+
+//########################## Percorrer a Arvore Sintatica ##################################
+
 /* 
  * static void transverse( TreeNode * tree, void (* preProc) (TreeNode *), void (* postProc) (TreeNode *) )
  * ARGS:
@@ -102,6 +109,8 @@ static void traverse( TreeNode * tree, void (* preProc) (TreeNode *), void (* po
  */
 static void nullProc(TreeNode * tree);
 
+//############################# Manipulacao da Arvore e Tabela ############################################
+
 /* 
  * void insertTNode(TreeNode * tree)
  * ARGS: 
@@ -133,14 +142,9 @@ void insertTNode(TreeNode * tree);
  * 
  * IMPORTANTE: So funciona se ja tiver sido conferido se a dada funcao EXISTE
  */  
-//void checkTNode(TreeNode * tree);
+void checkTNode(TreeNode * tree);
 
-/* 
- * static void setupGlobals()
- * 
- * Inicializa as funcoes globais: int input() e void output(int)
- */
-void insertGlobals(int loc);
+//############################ Chamadas da Analise Semantica #####################################
 
 void build_ST(TreeNode * tree);
 

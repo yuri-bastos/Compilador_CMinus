@@ -1,9 +1,10 @@
 int A;
 
-int test(void)
+int test(int b[])
 {
-    int b;
-    b = A;
+    while(b){
+        output(b[2]);
+    }
 }
 
 void main(void)

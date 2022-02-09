@@ -15,7 +15,7 @@
 #include "symtab.h"
 
 /* SIZE representa o tamanho maximo da tabela de hash */
-#define SIZE 211
+#define SIZE 311
 
 /* SHIFT e a potencia de 2 utilizada com indice alfa no calculo do hash */
 #define SHIFT 4
@@ -77,6 +77,7 @@ int search_ST(char *name, ScopeName scope){
  * na tabela hash com o id encontrado, caso seja valido...
  */
 void insert_ST(char * name,  int linenum, int loc, ScopeName scope, ExpType dType, DeclKind iType, TreeNode * declNode, funParsList params){    
+    
     char key[300] = "";
     strcat(key,name);//concatenando o nome na chave
     strcat(key,scope);//concatenando o escopo na chave
@@ -158,6 +159,9 @@ void print_ST(FILE *listing){
                             idtStr = "arr";
                             break;
 
+                        case ArrayParDeclK:
+                            idtStr = "arr";
+                            break;
                         default:
                             idtStr = "\0";
                             break;
